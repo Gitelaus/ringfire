@@ -337,7 +337,7 @@ function createCard(house, value, hidden){
 var displayCard;
 function toggleDisplayCard(house, value){
     cardContainer.alpha = 0.1;
-    stage.setChildIndx(cardContainer, 0);
+    stage.setChildIndex(cardContainer, 0);
     displayCard = createCard(house, value, false);
     displayCard.set({
         scaleX:1,

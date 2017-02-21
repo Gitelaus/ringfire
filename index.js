@@ -52,7 +52,6 @@ io.on('connection', (client) => {
         var g;
         if(data.gameid == "-c"){
             g = new Game(randomstring.generate(4).toUpperCase(), client, data.rules);
-            console.log(data.rules);
             games.push(g);
         }else{
             g = games.find(x => x.token == data.gameid.toUpperCase());

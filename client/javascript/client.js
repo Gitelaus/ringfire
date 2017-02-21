@@ -288,9 +288,9 @@ function setDeck(deck){
             _cValue:card.value
         });
         character.on('click', (event) => {
-            var xO = originX ? (originX - event.stageX) : 0;
-            var yO = originY ? (originY - event.stageY) : 0;
-            console.log(Math.sqrt(xO*xO + yO*yO));
+            if(displayCard){
+                return;
+            }
             socket.emit('card_reveal', {house:card.house,value:card.value})
             // if (character.image.src.indexOf("cardBack_green1") != -1 && !displayCard) {
             //     toggleDisplayCard(character._cHouse, character._cValue);
@@ -335,19 +335,25 @@ function toggleDisplayCard(house, value){
         x:gamescreen.width / 2
     });
     stage.addChild(displayCard);
-    var rule_text = new createjs.Text(current_rules.find(x => x.value == value).rule, "24px 'Unica One'", 'white');
+    var rule_text = new createjs.Text(current_rules.find(x => x.value == value).rule, "18px 'Unica One", 'white');
+    if(rule_text.getMeasuredWidth() > gamescreen.width){
+        
+    }
+    
+    rule_text.lineWidth = gamescreen.width * 0.7;
+    rule_text.textAlign = 'center';
     rule_text.set({
-        x:(gamescreen.width / 2) - rule_text.getMeasuredWidth() / 2,
+        x:gamescreen.width / 2,
         y:gamescreen.height / 4
     })
     stage.addChild(rule_text);
     var rule_text_background = new createjs.Shape();
     rule_text_background.set({
-        x:rule_text.x,
+        x:rule_text.x - rule_text.getMeasuredWidth() / 2,
         y:rule_text.y,
     })
     stage.addChildAt(rule_text_background, 0);
-    rule_text_background.graphics.beginFill("black").drawRect(-10, -10, rule_text.getMeasuredWidth() + 20, 44);
+    rule_text_background.graphics.beginFill("black").drawRect(-10, -10, rule_text.getMeasuredWidth() + 20, rule_text.getMeasuredHeight() + 20);
     console.log("Began timer");
     setTimeout(() => {
       stage.removeChild(displayCard);
@@ -355,5 +361,5 @@ function toggleDisplayCard(house, value){
       stage.removeChild(rule_text_background);
       displayCard = null;
       cardContainer.alpha = 1;
-    }, 1000);
+    }, 5000);
 }

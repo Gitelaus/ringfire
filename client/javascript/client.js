@@ -166,12 +166,21 @@ $("button:contains(You wanna fuck with the rules?)").on('click', () => {
     $('#game_select').hide();
 });
 
+$('#rule_editor p').on('keypress', (event)=>{
+    if(event.key == "Enter"){
+        $("#rule_editor p").attr('contenteditable', 'false');
+        $('#rule_editor p').css({'background':'rgba(100, 100, 100, 0.2)', 'color':'white'});
+        default_rules.find(x => x.value == $('#select_rule_value').val()).rule = $("#rule_editor p").text();
+    }
+});
 
 $('#rule_editor p').on('focusout', ()=>{
     $("#rule_editor p").attr('contenteditable', 'false');
     $('#rule_editor p').css({'background':'rgba(100, 100, 100, 0.2)', 'color':'white'});
     default_rules.find(x => x.value == $('#select_rule_value').val()).rule = $("#rule_editor p").text();
 });
+
+
 
 $(document).on('swiperight', () => {
     $('#pullmenu').animate({left:"95%"}, 1000);

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Ring of Fire</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
+        <link href="css/normalize.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+    </head>
+    <body>
+    <div id="container">
+        <canvas id="gamescreen" width="100%" height="100%">
+
+        </canvas>
+        <div id="overlay">
+            <section id="game_select">
+                <h1>Game Select</h1>
+                <div id="buttonContainer">
+                    <button id="buttonCreate">Create</button>
+                    |
+                    <button id="buttonJoin">Join</button>
+                <div>
+                <input id="textName" type="text" placeholder="Name" />
+                <input id="textGameID" type="text" placeholder="GameID" maxlength=4 style="text-transform: uppercase" />
+                <br/>
+                <button id="buttonConfirm">Confirm</button>
+            </section>
+            <div id="pullmenu">
+                <span id="pullmenu_title">Ring of Fire</span>
+                <a href=""><span id="gameid">GameID: XXYY</span></a>
+                <span>Players:</span>
+                <div id="playerlist">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<ul id="messages">
+
+    </ul>
+    <form id="frm" action="#">
+        <input type="text" placeholder="Type here..." id="messaging">
+        <button>Submit</button>
+    </form>-->
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+    <script src="http://192.168.0.11/javascript/pixi.js"></script>
+    <script src="http://192.168.0.11/socket.io/socket.io.js"></script>
+    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+    <script src="http://hammerjs.github.io/dist/hammer.min.js"></script>
+    <script src="http://192.168.0.11/javascript/client.js"></script>
+    </body>
+</html>

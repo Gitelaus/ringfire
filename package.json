@@ -1,0 +1,11 @@
+{
+  "name": "ring",
+  "version": "1.0.0",
+  "description": "Ring of fire app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nathan Joshua Dawson",
+  "license": "ISC"
+}

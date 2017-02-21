@@ -110,7 +110,7 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-$('#buttonJoin').on('click', (e) => {
+$('#buttonJoin').on('click touchstart', (e) => {
     $('#subformTitle').text('Join Game');
     $('#buttonJoin').css({'background':'green'});
     $('#buttonCreate').css({'background':'white'});
@@ -119,7 +119,7 @@ $('#buttonJoin').on('click', (e) => {
     $("button:contains(You wanna fuck with the rules?)").hide();
 });
 
-$('#buttonCreate').on('click', (e) => {
+$('#buttonCreate').on('click touchstart', (e) => {
     $('#subformTitle').text('Create Game');
     $('#buttonJoin').css({'background':'white'});
     $('#buttonCreate').css({'background':'green'});
@@ -128,7 +128,7 @@ $('#buttonCreate').on('click', (e) => {
     $("button:contains(You wanna fuck with the rules?)").show();
 });
 
-$('#buttonConfirm').on('click', () => {
+$('#buttonConfirm').on('click touchstart', () => {
     socket.emit('join_game', {
         name:$("#textName").val(),
         gameid:$("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
@@ -150,18 +150,18 @@ $('#select_rule_value').change(() => {
 });
 
 
-$("button:contains(Edit)").on('click', () => {
+$("button:contains(Edit)").on('click touchstart', () => {
     $("#rule_editor p").attr('contenteditable', 'true');
     $('#rule_editor p').css({'background':'white', 'color':'black'});
     $('#rule_editor p').focus();
 });
 
-$("button:contains(Exit)").on('click', () => {
+$("button:contains(Exit)").on('click touchstart', () => {
     $('#rule_editor').hide();
     $('#game_select').show();
 });
 
-$("button:contains(You wanna fuck with the rules?)").on('click', () => {
+$("button:contains(You wanna fuck with the rules?)").on('click touchstart', () => {
     $('#rule_editor').show();
     $('#game_select').hide();
 });

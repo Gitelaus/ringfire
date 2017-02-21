@@ -8,7 +8,7 @@
  */
 
 var socket = io();
-var form = $("form");
+var form = $("form"); 
 
 var username;
 
@@ -30,6 +30,7 @@ socket.on('join_game', (data) => {
         });
         $('#gameid').parent().attr('href', '?game=' + data.token)
         $('#gameid').text('GameID: ' + data.token);
+        current_rules = data.rules;
     }
     $("#game_select").hide();
     addPlayer(data.name);
@@ -58,6 +59,16 @@ socket.on('card_reveal', (data) => {
             cardContainer.setChildIndex(child, 0);
         }
     });
+    toggleDisplayCard(data.house, data.value);
+});
+
+var default_rules;
+var current_rules;
+
+socket.on('rule_update', (data) => {
+    default_rules = data;
+    current_rules = default_rules;
+    $('#select_rule_value').val("K").change();
 });
 
 window.addEventListener('deviceproximity', (event) => {
@@ -70,7 +81,13 @@ console.log(chrome);
 var stage, renderer, cardContainer
 
 var HOUSES = ["Spades", "Hearts", "Diamonds", "Clubs"];
-var VALUES = ["Q", "K", "J", "A", "10", "9", "8", "7", "6", "5","4", "3", "2"];
+var VALUES = ["K", "Q", "J", "A", "10", "9", "8", "7", "6", "5","4", "3", "2"];
+VALUES.forEach((value) => {
+    var option = $("<option/>", {
+        text:value
+    });
+    $("#select_rule_value").append(option);
+});
 var cardBaseTexture;
 var gamescreen;
 
@@ -99,6 +116,7 @@ $('#buttonJoin').on('click', (e) => {
     $('#buttonCreate').css({'background':'white'});
     $('#textName').show();
     $('#textGameID').show();
+    $("button:contains(You wanna fuck with the rules?)").hide();
 });
 
 $('#buttonCreate').on('click', (e) => {
@@ -107,13 +125,52 @@ $('#buttonCreate').on('click', (e) => {
     $('#buttonCreate').css({'background':'green'});
     $('#textName').show();
     $('#textGameID').hide();
+    $("button:contains(You wanna fuck with the rules?)").show();
 });
 
 $('#buttonConfirm').on('click', () => {
     socket.emit('join_game', {
         name:$("#textName").val(),
-        gameid:$("#textGameID").is(":visible") ? $("#textGameID").val() : "-c"
+        gameid:$("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
+        rules:current_rules
     });
+});
+
+$('#select_rule_value').change(() => {
+    var i = 0;
+    $('#rule_editor div img').each(function(){
+        $(this).attr('src', "/images/cards/card" + HOUSES[i] + $('#select_rule_value').val() + ".png");
+        i++;
+    });
+
+    var defaultRuleText = default_rules.find(x => x.value == $('#select_rule_value').val()).rule
+    var currentRuleText = current_rules.find(x => x.value == $('#select_rule_value').val()).rule
+
+    $('#rule_editor p').text(defaultRuleText == current_rules ? defaultRuleText : currentRuleText);
+});
+
+
+$("button:contains(Edit)").on('click', () => {
+    $("#rule_editor p").attr('contenteditable', 'true');
+    $('#rule_editor p').css({'background':'white', 'color':'black'});
+    $('#rule_editor p').focus();
+});
+
+$("button:contains(Exit)").on('click', () => {
+    $('#rule_editor').hide();
+    $('#game_select').show();
+});
+
+$("button:contains(You wanna fuck with the rules?)").on('click', () => {
+    $('#rule_editor').show();
+    $('#game_select').hide();
+});
+
+
+$('#rule_editor p').on('focusout', ()=>{
+    $("#rule_editor p").attr('contenteditable', 'false');
+    $('#rule_editor p').css({'background':'rgba(100, 100, 100, 0.2)', 'color':'white'});
+    default_rules.find(x => x.value == $('#select_rule_value').val()).rule = $("#rule_editor p").text();
 });
 
 $(document).on('swiperight', () => {
@@ -278,9 +335,24 @@ function toggleDisplayCard(house, value){
         x:gamescreen.width / 2
     });
     stage.addChild(displayCard);
+    var rule_text = new createjs.Text(current_rules.find(x => x.value == value).rule, "24px 'Unica One'", 'white');
+    rule_text.set({
+        x:(gamescreen.width / 2) - rule_text.getMeasuredWidth() / 2,
+        y:gamescreen.height / 4
+    })
+    stage.addChild(rule_text);
+    var rule_text_background = new createjs.Shape();
+    rule_text_background.set({
+        x:rule_text.x,
+        y:rule_text.y,
+    })
+    stage.addChildAt(rule_text_background, 0);
+    rule_text_background.graphics.beginFill("black").drawRect(-10, -10, rule_text.getMeasuredWidth() + 20, 44);
     console.log("Began timer");
     setTimeout(() => {
       stage.removeChild(displayCard);
+      stage.removeChild(rule_text);
+      stage.removeChild(rule_text_background);
       displayCard = null;
       cardContainer.alpha = 1;
     }, 1000);

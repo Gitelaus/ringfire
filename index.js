@@ -13,7 +13,22 @@ var games = [];
 
 // Card Information
 var HOUSES = ["Spades", "Hearts", "Diamonds", "Clubs"];
-var VALUES = ["Q", "K", "J", "A", "10", "9", "8", "7", "6", "5","4", "3", "2"];
+var VALUES = ["K", "Q", "J", "A", "10", "9", "8", "7", "6", "5","4", "3", "2"];
+var default_rules = [
+    {value:"K", rule:"Pour some of your drink into the king cup, if you get the forth, you down it"},
+    {value:"Q", rule:"You're the question master, anyone who answers your questions must drink"},
+    {value:"J", rule:"Create your own rule"},
+    {value:"A", rule:"Waterfall, drink till the person to the right of you stops drinking, or carry on."},
+    {value:"10", rule:"Categories - Pick a subject, name a thing in that subject/context. Person who can't drinks."},
+    {value:"9", rule:"Rhyme with words, pick a word and the person who can't think of a rhyme drinks"},
+    {value:"8", rule:"You get the ability to pick a mate, and when you drink, they drink"},
+    {value:"7", rule:"Heaven Master - When you put up your hand, the last person to follow must drink"},
+    {value:"6", rule:"Six is Dicks. Guys drink"},
+    {value:"5", rule:"5 is never have I ever. Name something and everyone who's done that must drink"},
+    {value:"4", rule:"Four is whores. Girls drink"},
+    {value:"3", rule:"Three is me. You must drink"},
+    {value:"2", rule:"Two is you. You get to pick a player to drink"},
+]
 //
 
 app.get('*', (req, res) => {
@@ -32,10 +47,12 @@ var users = new Array();
 var games = new Array();
 var reconnects = 0;
 io.on('connection', (client) => {
+    client.emit('rule_update', default_rules);
     client.on('join_game', (data) => {
         var g;
         if(data.gameid == "-c"){
-            g = new Game(randomstring.generate(4).toUpperCase(), client);
+            g = new Game(randomstring.generate(4).toUpperCase(), client, data.rules);
+            console.log(data.rules);
             games.push(g);
         }else{
             g = games.find(x => x.token == data.gameid.toUpperCase());
@@ -47,7 +64,7 @@ io.on('connection', (client) => {
             namelist.push(user.name);
         });
         g.addUser(new User(data.name, client));
-        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist});
+        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist, rules:g.rules});
     });
 
     client.on('rotation_update', (data) => {
@@ -113,13 +130,14 @@ class User{
 }
 
 class Game {
-    constructor(token, host){
+    constructor(token, host, rules){
         this.token = token;
         this.users = [];
         this.host = host;
         this.deck = [];
         this.generateDeck();
         this.goIndex = 0;
+        this.rules = rules || default_rules;
     }
 
     addUser(user){
@@ -137,7 +155,6 @@ class Game {
     progressRound(){
         this.goIndex += 1;
         if(this.goIndex > this.users.length - 1){
-            console.log("tick over");
             this.goIndex = 0;
         }
     }

@@ -38,7 +38,7 @@ app.get('*', (req, res) => {
         if(err == null){
             res.sendFile(f_path);
         }else{
-            console.log("Request for " + t_url + " failed");
+                .log("Request for " + t_url + " failed");
         }
     });
 });

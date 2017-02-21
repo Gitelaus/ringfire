@@ -7,7 +7,7 @@
  * We need to talk, we need to talk to the _SERVER_
  */
 
-var socket = io();
+var socket = io("https://ringfire.herokuapp.com");
 var form = $("form"); 
 
 var username;
@@ -337,6 +337,7 @@ function createCard(house, value, hidden){
 var displayCard;
 function toggleDisplayCard(house, value){
     cardContainer.alpha = 0.1;
+    stage.setChildIndx(cardContainer, 0);
     displayCard = createCard(house, value, false);
     displayCard.set({
         scaleX:1,
@@ -347,8 +348,7 @@ function toggleDisplayCard(house, value){
     var rule_text = new createjs.Text(current_rules.find(x => x.value == value).rule, "18px 'Unica One", 'white');
     if(rule_text.getMeasuredWidth() > gamescreen.width){
         
-    }
-    
+    }  
     rule_text.lineWidth = gamescreen.width * 0.7;
     rule_text.textAlign = 'center';
     rule_text.set({
@@ -361,7 +361,7 @@ function toggleDisplayCard(house, value){
         x:rule_text.x - rule_text.getMeasuredWidth() / 2,
         y:rule_text.y,
     })
-    stage.addChildAt(rule_text_background, 0);
+    stage.addChildAt(rule_text_background, 1);
     rule_text_background.graphics.beginFill("black").drawRect(-10, -10, rule_text.getMeasuredWidth() + 20, rule_text.getMeasuredHeight() + 20);
     console.log("Began timer");
     setTimeout(() => {

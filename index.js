@@ -82,7 +82,7 @@ io.on('connection', (client) => {
     })
 });
 
-http.listen(80, () => {
+http.listen(process.env.PORT || 3000, () => {
     console.log('== Started == ');
 });
 

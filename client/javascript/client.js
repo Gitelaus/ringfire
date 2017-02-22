@@ -8,50 +8,53 @@
  */
 
 var socket = io("https://ringfire.herokuapp.com");
-var form = $("form"); 
+var form = $("form");
 
 var username;
 
-form.submit(() => {
+form.submit(function () {
     socket.emit('message', $('#messaging').val());
 });
 
-socket.on('message', (data) => {
+socket.on('message', function (data) {
     $('#messages').append($('<li>').text(data));
 });
 
-socket.on('join_game', (data) => {
+socket.on('join_game', function (data) {
     //console.log($("#overlay form"));
-    if(!username && data.token && data.deck && data.users){
+    if (!username && data.token && data.deck && data.users) {
         username = data.name;
         setDeck(data.deck);
-        data.users.forEach((u) => {
+        data.users.forEach(function (u) {
             addPlayer(u);
         });
-        $('#gameid').parent().attr('href', '?game=' + data.token)
+        $('#gameid').parent().attr('href', '?game=' + data.token);
         $('#gameid').text('GameID: ' + data.token);
         current_rules = data.rules;
+        $("#pullmenu").css('display', 'flex');
     }
     $("#game_select").hide();
     addPlayer(data.name);
 });
 
-socket.on('buzz', () => {
+socket.on('buzz', function () {
+    if(!nagivator.vibrate)return;
     navigator.vibrate([100, 100, 100, 100, 100, 100, 100, 100]);
 });
 
-socket.on('rotation_update', (data) => {
+socket.on('rotation_update', function (data) {
     cardContainer.set({
-        rotation:data
+        rotation: data
     });
 });
 
-socket.on('card_reveal', (data) => {
-    if(data.active){
+socket.on('card_reveal', function (data) {
+    if (data.active) {
+        if(!nagivator.vibrate)return;
         navigator.vibrate([100, 100, 100, 100, 100, 100, 100, 100]);
     }
-    cardContainer.children.forEach((child) => {
-        if(child._cHouse == data.house && child._cValue == data.value){
+    cardContainer.children.forEach(function (child) {
+        if (child._cHouse == data.house && child._cValue == data.value) {
             var im = new Image();
             im.src = "/images/cards/card" + child._cHouse + child._cValue + ".png";
             child.image = im;
@@ -65,26 +68,25 @@ socket.on('card_reveal', (data) => {
 var default_rules;
 var current_rules;
 
-socket.on('rule_update', (data) => {
+socket.on('rule_update', function (data) {
     default_rules = data;
     current_rules = default_rules;
     $('#select_rule_value').val("K").change();
 });
 
-window.addEventListener('deviceproximity', (event) => {
+window.addEventListener('deviceproximity', function (event) {
     socket.emit('info', event.value);
 });
-console.log(chrome);
 
 // THE USER NEEDS TO _SEE_ SHIT
 
-var stage, renderer, cardContainer
+var stage, renderer, cardContainer;
 
 var HOUSES = ["Spades", "Hearts", "Diamonds", "Clubs"];
-var VALUES = ["K", "Q", "J", "A", "10", "9", "8", "7", "6", "5","4", "3", "2"];
-VALUES.forEach((value) => {
+var VALUES = ["K", "Q", "J", "A", "10", "9", "8", "7", "6", "5", "4", "3", "2"];
+VALUES.forEach(function (value) {
     var option = $("<option/>", {
-        text:value
+        text: value
     });
     $("#select_rule_value").append(option);
 });
@@ -94,13 +96,12 @@ var gamescreen;
 var originX, originY;
 var ui = {};
 
-navigator.vibrate([100, 100, 100, 100, 100, 100, 100, 100]);
 
 $("#textGameID").val(getParameterByName('game'));
 
 function getParameterByName(name, url) {
     if (!url) {
-      url = window.location.href;
+        url = window.location.href;
     }
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -110,99 +111,131 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-$('#buttonJoin').on('click touchstart', (e) => {
+
+var ua = navigator.userAgent,
+    bindEvent = ua.match(/iPad/i) ? "touchstart" : "click";
+
+$('#buttonJoin').on('touchstart click', function (e) {
     $('#subformTitle').text('Join Game');
-    $('#buttonJoin').css({'background':'green'});
-    $('#buttonCreate').css({'background':'white'});
+    $('#buttonJoin').css({ 'background': 'green' });
+    $('#buttonCreate').css({ 'background': 'white' });
     $('#textName').show();
     $('#textGameID').show();
     $("button:contains(You wanna fuck with the rules?)").hide();
 });
 
-$('#buttonCreate').on('click touchstart', (e) => {
+$(document).ready(function () {
+    var _this = this;
+
+    $('.button').on('click touchstart tap', '.button', function () {
+        $(_this).css('background', 'red');
+    });
+});
+
+var reg = /iP/i;
+reg.test(navigator.userAgent) && $('*').css('cursor', 'pointer');
+
+$('#buttonCreate').bind('touchstart click', function (e) {
+    e.preventDefault();
     $('#subformTitle').text('Create Game');
-    $('#buttonJoin').css({'background':'white'});
-    $('#buttonCreate').css({'background':'green'});
+    $('#buttonJoin').css({ 'background': 'white' });
+    $('#buttonCreate').css({ 'background': 'green' });
     $('#textName').show();
     $('#textGameID').hide();
     $("button:contains(You wanna fuck with the rules?)").show();
 });
 
-$('#buttonConfirm').on('click touchstart', () => {
+$('#buttonConfirm').on('touchstart click', function () {
     socket.emit('join_game', {
-        name:$("#textName").val(),
-        gameid:$("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
-        rules:current_rules
+        name: $("#textName").val(),
+        gameid: $("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
+        rules: current_rules
+    });
+    FB.getLoginStatus(function (response) {
+        console.log(response);
+        if (response.status == "connected") {
+            console.log("http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal");
+        } else {
+            FB.login();
+        }
     });
 });
 
-$('#select_rule_value').change(() => {
+$('#select_rule_value').change(function () {
     var i = 0;
-    $('#rule_editor div img').each(function(){
+    $('#rule_editor div img').each(function () {
         $(this).attr('src', "/images/cards/card" + HOUSES[i] + $('#select_rule_value').val() + ".png");
         i++;
     });
 
-    var defaultRuleText = default_rules.find(x => x.value == $('#select_rule_value').val()).rule
-    var currentRuleText = current_rules.find(x => x.value == $('#select_rule_value').val()).rule
+    var defaultRuleText = default_rules.find(function (x) {
+        return x.value == $('#select_rule_value').val();
+    }).rule;
+    var currentRuleText = current_rules.find(function (x) {
+        return x.value == $('#select_rule_value').val();
+    }).rule;
 
     $('#rule_editor p').text(defaultRuleText == current_rules ? defaultRuleText : currentRuleText);
 });
 
-
-$("button:contains(Edit)").on('click touchstart', () => {
+$("button:contains(Edit)").on('click touchstart', function () {
     $("#rule_editor p").attr('contenteditable', 'true');
-    $('#rule_editor p').css({'background':'white', 'color':'black'});
+    $('#rule_editor p').css({ 'background': 'white', 'color': 'black' });
     $('#rule_editor p').focus();
 });
 
-$("button:contains(Exit)").on('click touchstart', () => {
-    $('#rule_editor').hide();
-    $('#game_select').show();
+$("button:contains(Exit)").on('click touchstart', function () {
+    var fadeTime = 500;
+    $('#rule_editor').fadeToggle(fadeTime / 2, function () {
+        $('#game_select').fadeToggle(fadeTime / 2);
+    });
 });
 
-$("button:contains(You wanna fuck with the rules?)").on('click touchstart', () => {
-    $('#rule_editor').show();
-    $('#game_select').hide();
+$("button:contains(You wanna fuck with the rules?)").on('click touchstart', function () {
+    var fadeTime = 500;
+    $('#game_select').fadeToggle(fadeTime / 2, function () {
+        $('#rule_editor').fadeToggle(fadeTime / 2);
+    });
 });
 
-$('#rule_editor p').on('keypress', (event)=>{
-    if(event.key == "Enter"){
+$('#rule_editor p').on('keypress', function (event) {
+    if (event.key == "Enter") {
         $("#rule_editor p").attr('contenteditable', 'false');
-        $('#rule_editor p').css({'background':'rgba(100, 100, 100, 0.2)', 'color':'white'});
-        default_rules.find(x => x.value == $('#select_rule_value').val()).rule = $("#rule_editor p").text();
+        $('#rule_editor p').css({ 'background': 'rgba(100, 100, 100, 0.2)', 'color': 'white' });
+        default_rules.find(function (x) {
+            return x.value == $('#select_rule_value').val();
+        }).rule = $("#rule_editor p").text();
     }
 });
 
-$('#rule_editor p').on('focusout', ()=>{
+$('#rule_editor p').on('focusout', function () {
     $("#rule_editor p").attr('contenteditable', 'false');
-    $('#rule_editor p').css({'background':'rgba(100, 100, 100, 0.2)', 'color':'white'});
-    default_rules.find(x => x.value == $('#select_rule_value').val()).rule = $("#rule_editor p").text();
+    $('#rule_editor p').css({ 'background': 'rgba(100, 100, 100, 0.2)', 'color': 'white' });
+    default_rules.find(function (x) {
+        return x.value == $('#select_rule_value').val();
+    }).rule = $("#rule_editor p").text();
 });
 
-
-
-$(document).on('swiperight', () => {
-    $('#pullmenu').animate({left:"95%"}, 1000);
+$(document).on('swiperight', function () {
+    $('#pullmenu').animate({ left: "95%" }, 1000);
 });
 
-$(document).on('swipeleft', () => {
-    $('#pullmenu').animate({left:"50%"}, 1000);
+$(document).on('swipeleft', function () {
+    $('#pullmenu').animate({ left: "50%" }, 1000);
 });
 
 var hammertime = new Hammer(document);
-hammertime.on('swipeleft', () => {
-  $('#pullmenu').animate({left:"50%"}, 1000);
+hammertime.on('swipeleft', function () {
+    $('#pullmenu').animate({ left: "50%" }, 1000);
 });
 
-hammertime.on('swiperight', ()=>{
-  $('#pullmenu').animate({left:"95%"}, 1000);
-})
+hammertime.on('swiperight', function () {
+    $('#pullmenu').animate({ left: "95%" }, 1000);
+});
 
 setup();
 
-
-function setup(){
+function setup() {
 
     gamescreen = document.getElementById('gamescreen');
 
@@ -214,13 +247,13 @@ function setup(){
     createjs.Touch.enable(stage);
 
     cardBaseTexture = new createjs.SpriteSheet({
-        images:["/images/cards/playingCards.png"],
-        frames:{width:140, height:190, count:60}
+        images: ["/images/cards/playingCards.png"],
+        frames: { width: 140, height: 190, count: 60 }
     });
     stage.set({
         regX: 0,
         regY: -gamescreen.height / 2
-    })
+    });
     cardContainer = new createjs.Container();
 
     stage.addChild(cardContainer);
@@ -228,79 +261,79 @@ function setup(){
     ui.cardCount = new createjs.Text('', "60px 'Unica One'", 'black');
     ui.cardCount.outline = 2.5;
     ui.cardCount.set({
-        x:gamescreen.width - (ui.cardCount.getMeasuredWidth()),
-        y:-gamescreen.height / 2});
+        x: gamescreen.width - ui.cardCount.getMeasuredWidth(),
+        y: -gamescreen.height / 2 });
 
     stage.addChild(ui.cardCount);
 
-    stage.on("stagemousedown", (event) => {
-        if(displayCard)return;
+    stage.on("stagemousedown", function (event) {
+        if (displayCard) return;
         originX = event.stageX;
         originY = event.stageY;
     });
 
-    stage.on("stagemouseup", (event) => {
+    stage.on("stagemouseup", function (event) {
         originX = null;
         originY = null;
     });
 
-    stage.on("stagemousemove", (event) => {
+    stage.on("stagemousemove", function (event) {
 
-      if(originY){
-          if(Math.abs(event.stageX - originX) > Math.abs(event.stageY - originY)){
-            return;
-          }
-          cardContainer.set({
-                  rotation:cardContainer.rotation + (event.stageY - originY) / 5
-          });
-          socket.emit('rotation_update', cardContainer.rotation + (event.stageY - originY) / 4);
-          originY = event.stageY;
-          originX = event.stageX;
-      }
+        if (originY) {
+            if (Math.abs(event.stageX - originX) > Math.abs(event.stageY - originY)) {
+                return;
+            }
+            cardContainer.set({
+                rotation: cardContainer.rotation + (event.stageY - originY) / 5
+            });
+            socket.emit('rotation_update', cardContainer.rotation + (event.stageY - originY) / 4);
+            originY = event.stageY;
+            originX = event.stageX;
+        }
     });
 
     createjs.Ticker.addEventListener("tick", render);
     createjs.Ticker.setFPS(40);
-} 
+}
 
-function addPlayer(playername){
+function addPlayer(playername) {
     var playerspan = $("<span>", {
-        class:'player',
-        name:playername,
-        text:playername
+        class: 'player',
+        name: playername,
+        text: playername
     });
     $("#playerlist").append(playerspan);
 }
 
-function removePlayer(playername){
+function removePlayer(playername) {
     ui.userList.text = ui.userList.text.replace("\n" + playername, "");
     ui.userList.set({
-        x:gamescreen.width - ui.userList.getMeasuredWidth()
+        x: gamescreen.width - ui.userList.getMeasuredWidth()
     });
 }
 
-function setDeck(deck){
+function setDeck(deck) {
     var i = 0;
     var centerX = 0;
     var centerY = 0;
-    var radius = ((gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height) * 0.33);
-    var desiredRadianAngleOnCircle = (Math.PI*2)/52;
-    deck.forEach((card) => {
+    var radius = (gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height) * 0.33;
+    var desiredRadianAngleOnCircle = Math.PI * 2 / 52;
+    deck.forEach(function (card) {
         var character = createCard(card.house, card.value, !card.revealed);
-        var x=centerX+radius*Math.cos(desiredRadianAngleOnCircle * (i));
-        var y=centerY+radius*Math.sin(desiredRadianAngleOnCircle * (i));
+        var x = centerX + radius * Math.cos(desiredRadianAngleOnCircle * i);
+        var y = centerY + radius * Math.sin(desiredRadianAngleOnCircle * i);
         character.set({
-            x:x,
-            y:y,
-            rotation:(((i + 26) / 52) * 360),
-            _cHouse:card.house,
-            _cValue:card.value
+            x: x,
+            y: y,
+            rotation: (i + 26) / 52 * 360,
+            _cHouse: card.house,
+            _cValue: card.value
         });
-        character.on('click', (event) => {
-            if(displayCard){
+        character.on('click', function (event) {
+            if (displayCard) {
                 return;
             }
-            socket.emit('card_reveal', {house:card.house,value:card.value})
+            socket.emit('card_reveal', { house: card.house, value: card.value });
             // if (character.image.src.indexOf("cardBack_green1") != -1 && !displayCard) {
             //     toggleDisplayCard(character._cHouse, character._cValue);
             //     var im = new Image();
@@ -315,60 +348,59 @@ function setDeck(deck){
     });
 }
 
-function render(){
+function render() {
     stage.update();
 }
 
 // STRING STRING BOOL
-function createCard(house, value, hidden){
+function createCard(house, value, hidden) {
     var character = new createjs.Bitmap(hidden ? "/images/cards/cardBack_green1.png" : "/images/cards/card" + house + value + ".png");
     character.set({
-        truevalue:"/images/cards/card" + house + value + ".png",
-        regX:140 / 2,
-        regY:190 / 2,
-        scaleX:0.9,
-        scaleY:0.9
+        truevalue: "/images/cards/card" + house + value + ".png",
+        regX: 140 / 2,
+        regY: 190 / 2,
+        scaleX: 0.9,
+        scaleY: 0.9
     });
     //character.shadow = new createjs.Shadow('#000000',1, 1, 5);
     return character;
 }
 
-
 var displayCard;
-function toggleDisplayCard(house, value){
-    cardContainer.alpha = 0.1;
+function toggleDisplayCard(house, value) {
+    cardContainer.alpha = 0.3;
     stage.setChildIndex(cardContainer, 0);
     displayCard = createCard(house, value, false);
     displayCard.set({
-        scaleX:1,
-        scaleY:1,
-        x:gamescreen.width / 2
+        scaleX: 1,
+        scaleY: 1,
+        x: gamescreen.width / 2
     });
     stage.addChild(displayCard);
-    var rule_text = new createjs.Text(current_rules.find(x => x.value == value).rule, "18px 'Unica One", 'white');
-    if(rule_text.getMeasuredWidth() > gamescreen.width){
-        
-    }  
+    var rule_text = new createjs.Text(current_rules.find(function (x) {
+        return x.value == value;
+    }).rule, "18px 'Unica One", 'white');
+    if (rule_text.getMeasuredWidth() > gamescreen.width) {}
     rule_text.lineWidth = gamescreen.width * 0.7;
     rule_text.textAlign = 'center';
     rule_text.set({
-        x:gamescreen.width / 2,
-        y:gamescreen.height / 4
-    })
+        x: gamescreen.width / 2,
+        y: gamescreen.height / 4
+    });
     stage.addChild(rule_text);
     var rule_text_background = new createjs.Shape();
     rule_text_background.set({
-        x:rule_text.x - rule_text.getMeasuredWidth() / 2,
-        y:rule_text.y,
-    })
+        x: rule_text.x - rule_text.getMeasuredWidth() / 2,
+        y: rule_text.y
+    });
     stage.addChildAt(rule_text_background, 1);
     rule_text_background.graphics.beginFill("black").drawRect(-10, -10, rule_text.getMeasuredWidth() + 20, rule_text.getMeasuredHeight() + 20);
     console.log("Began timer");
-    setTimeout(() => {
-      stage.removeChild(displayCard);
-      stage.removeChild(rule_text);
-      stage.removeChild(rule_text_background);
-      displayCard = null;
-      cardContainer.alpha = 1;
+    setTimeout(function () {
+        stage.removeChild(displayCard);
+        stage.removeChild(rule_text);
+        stage.removeChild(rule_text_background);
+        displayCard = null;
+        cardContainer.alpha = 1;
     }, 5000);
 }

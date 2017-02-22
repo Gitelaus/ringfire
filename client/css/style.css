@@ -25,7 +25,14 @@
     height:100%;
     z-index:1;
     pointer-events: none;
-    overflow: hidden;
+}
+
+.button{
+    cursor: pointer;
+    pointer-events: all;
+    padding:10px;
+    background:white;
+    color:black;
 }
 
 #overlay *{
@@ -50,6 +57,7 @@
 
 #buttonContainer{
     height:100%;
+    z-index: 10000;
 }
 
 #overlay section h1, #overlay section h2{
@@ -73,14 +81,17 @@ button{
 
 button:focus{
     outline: none;
+        cursor: pointer;
 }
 
 button:hover{
     background:rgb(0, 200, 0);
+        cursor: pointer;
 }
 
 button:active{
     background:green;
+        cursor: pointer;
 }
 
 input[type=text]{
@@ -98,10 +109,10 @@ input[type=text]{
 
 #pullmenu{
     position:absolute;
-    flex-direction: column;
     width:50%;
     height:100%;
-    left:98%;
+    left:50%;
+    top:0px;
     background:rgba(70, 70, 70, 0.8);
     color: rgb(233, 233, 233);
     z-index: 1000;

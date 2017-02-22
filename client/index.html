@@ -18,9 +18,9 @@
             <section id="game_select">
                 <h1>Game Select</h1>
                 <div id="buttonContainer">
-                    <button id="buttonCreate">Create</button>
+                    <button style="cursor:pointer; pointer-events: all;" id="buttonCreate" onclick="return switchButtonMenu();">Create</button>
                     |
-                    <button id="buttonJoin">Join</button>
+                    <button style="cursor:pointer; pointer-events: all;" id="buttonJoin" onclick="void(0);">Join</button>
                 <div>
                 <input id="textName" type="text" placeholder="Name" />
                 <button style="display:none;">You wanna fuck with the rules?</button>
@@ -70,11 +70,31 @@
         <input type="text" placeholder="Type here..." id="messaging">
         <button>Submit</button>
     </form>-->
+    <script src="https://jsconsole.com/js/remote.js?9bdc28ef-5e75-40ad-8c84-8cf5c0f86e98"></script>
+
     <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
     <script src="/javascript/pixi.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
     <script src="/javascript/hammer.min.js"></script>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+            appId      : '247109212415502',
+            xfbml      : true,
+            version    : 'v2.8'
+            });
+            FB.AppEvents.logPageView();
+        };
+
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        </script>
     <script src="/javascript/client.js"></script>
     </body>
 </html>

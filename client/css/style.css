@@ -108,6 +108,7 @@ input[type=text]{
 }
 
 #pullmenu{
+    display: none;
     position:absolute;
     width:50%;
     height:100%;

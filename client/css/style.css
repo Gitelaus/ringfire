@@ -109,6 +109,7 @@ input[type=text]{
 
 #pullmenu{
     position:absolute;
+    flex-direction: column;
     width:50%;
     height:100%;
     left:50%;

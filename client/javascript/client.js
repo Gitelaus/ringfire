@@ -31,7 +31,7 @@ socket.on('join_game', function (data) {
         $('#gameid').parent().attr('href', '?game=' + data.token);
         $('#gameid').text('GameID: ' + data.token);
         current_rules = data.rules;
-        $("#pullmenu").css('display', 'block');
+        $("#pullmenu").css('display', 'flex');
     }
     $("#game_select").hide();
     addPlayer(data.name);

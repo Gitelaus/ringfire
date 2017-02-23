@@ -211,10 +211,16 @@ $("button:contains(You wanna fuck with the rules?)").on('click touchstart', func
     });
 });
 
+$('#guest_button').on('click touchstart', (event) => {
+    FB.getLoginStatus(function(response){
+        if(response.status === "connected"){
+            FB.logout();
+        }
+    })
+});
+
 $("#facebook_button").on('click touchstart', (event) => {
-    FB.getLoginStatus(function (response) {
-        console.log(response)
-        if(facebookProfilePicture || facebook_name)return;
+    FB.login((response) => {
         if (response.status === "connected") {
             facebookProfilePicture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
             FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
@@ -226,8 +232,6 @@ $("#facebook_button").on('click touchstart', (event) => {
                     return $('<h3/>', {id:'textName',text:facebook_name,name:facebook_name});
                 })
             });
-        } else {
-            FB.login();
         }
     });
 });

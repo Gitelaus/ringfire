@@ -27,7 +27,7 @@ socket.on('join_game', function (data) {
         username = data.name;
         setDeck(data.deck);
         data.users.forEach(function (u) {
-            addPlayer(u, u.facebookProfilePicture);
+            addPlayer(u, "https://graph.facebook.com/" + u.facebook_id + "/picture?type=normal");
         });
         $('#gameid').parent().attr('href', '?game=' + data.token);
         $('#gameid').text('GameID: ' + data.token);
@@ -35,7 +35,7 @@ socket.on('join_game', function (data) {
         $("#pullmenu").css('display', 'flex');
     }
     $("#game_select").hide();
-    addPlayer(data.name, data.facebookProfilePicture);
+    addPlayer(data.name, data.facebook_id);
 });
 
 socket.on('buzz', function () {

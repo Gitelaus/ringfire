@@ -7,7 +7,7 @@
  * We need to talk, we need to talk to the _SERVER_
  */
 
-var socket = io("https://ringfire.herokuapp.com");
+var socket = io();
 var form = $("form");
 
 var username;
@@ -21,12 +21,13 @@ socket.on('message', function (data) {
 });
 
 socket.on('join_game', function (data) {
+    console.log(data);
     //console.log($("#overlay form"));
     if (!username && data.token && data.deck && data.users) {
         username = data.name;
         setDeck(data.deck);
         data.users.forEach(function (u) {
-            addPlayer(u);
+            addPlayer(u, u.facebookProfilePicture);
         });
         $('#gameid').parent().attr('href', '?game=' + data.token);
         $('#gameid').text('GameID: ' + data.token);
@@ -34,7 +35,7 @@ socket.on('join_game', function (data) {
         $("#pullmenu").css('display', 'flex');
     }
     $("#game_select").hide();
-    addPlayer(data.name);
+    addPlayer(data.name, data.facebookProfilePicture);
 });
 
 socket.on('buzz', function () {
@@ -98,7 +99,7 @@ var gamescreen;
 var originX, originY, startRot;
 var ui = {};
 
-var facebook_name, facebook_picture;
+var facebook_name, facebookProfilePicture;
 
 
 $("#textGameID").val(getParameterByName('game'));
@@ -150,11 +151,14 @@ $('#buttonCreate').bind('touchstart click', function (e) {
 });
 
 $('#buttonConfirm').on('touchstart click', function () {
-    socket.emit('join_game', {
-        name: $("#textName").val(),
+    var dataPacket = {
+        name: $("#textName").val() || $('#textName').text(),
+        facebookProfilePicture:facebookProfilePicture,
         gameid: $("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
         rules: current_rules
-    });
+    }
+    socket.emit('join_game', dataPacket);
+    console.log(dataPacket);
 });
 
 // var fbLogin = setInterval(() => {
@@ -210,14 +214,14 @@ $("button:contains(You wanna fuck with the rules?)").on('click touchstart', func
 
 $("#facebook_button").on('click touchstart', (event) => {
     FB.getLoginStatus(function (response) {
-        if(facebook_picture && facebook_name)return;
+        if(facebookProfilePicture || facebook_name)return;
         if (response.status == "connected") {
-            facebook_picture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
+            facebookProfilePicture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
             FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
                 facebook_name = response.first_name + " " + response.last_name;
                 $('#login_form').hide();
                 $('#game_select').show();
-                $('<img>', {src:facebook_picture, class:'facebook_image'}).insertBefore($('#textName'));
+                $('<img>', {src:facebookProfilePicture, class:'facebook_image'}).insertBefore($('#textName'));
                 $('#textName').replaceWith(() => {
                     return $('<h3/>', {id:'textName',text:facebook_name,name:facebook_name});
                 })
@@ -251,12 +255,12 @@ $(document).on('swiperight', function () {
 });
 
 $(document).on('swipeleft', function () {
-    $('#pullmenu').animate({ left: "50%" }, 1000);
+    $('#pullmenu').animate({ left: gamescreen.width - $("#pullmenu").width() }, 1000);
 });
 
 var hammertime = new Hammer(document);
 hammertime.on('swipeleft', function () {
-    $('#pullmenu').animate({ left: "50%" }, 1000);
+    $('#pullmenu').animate({ left: gamescreen.width - $("#pullmenu").width() }, 1000);
 });
 
 hammertime.on('swiperight', function () {
@@ -329,13 +333,22 @@ function setup() {
     createjs.Ticker.setFPS(40);
 }
 
-function addPlayer(playername) {
+function addPlayer(playername, playerImage) {
+    var playerContainer = $('<div/>',{
+        class:'playerContainer'
+    });
     var playerspan = $("<span>", {
         class: 'player',
         name: playername,
         text: playername
     });
-    $("#playerlist").append(playerspan);
+    var player_img = $('<img/>', {
+        src:playerImage,
+        style:'width:50px;height:50px;padding:4px'
+    });
+    playerContainer.append(player_img);
+    playerContainer.append(playerspan)
+    $("#playerlist").append(playerContainer);
 }
 
 function removePlayer(playername) {

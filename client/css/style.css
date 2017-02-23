@@ -111,16 +111,17 @@ input[type=text]{
 #pullmenu{
     position:absolute;
     flex-direction: column;
-    width:50%;
+    width:70%;
+    max-width:300px;
     height:100%;
-    left:50%;
+    left:95%;
     top:0px;
     background:rgba(70, 70, 70, 0.8);
     color: rgb(233, 233, 233);
     z-index: 1000;
 }
 
-#pullmenu span{
+#pullmenu span:not(.player){
     display:block;
     background:black;
     padding-left:5px;
@@ -136,8 +137,7 @@ input[type=text]{
   font-size:26px;
 }
 
-#pullmenu #playerlist *{
-    display:block;
+#pullmenu #playerlist>*{
     font-size:24px;
     border-left:15px green solid;
     padding-left:5px;
@@ -182,5 +182,22 @@ input[type=checkbox]{
     padding:10px;
     margin:10px;
     background:rgba(100, 100, 100, 0.2);
-    border: 1px white solid;
+    border:none;
+    display: inline-block;
+}
+
+.playerContainer{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+    background:rgba(50, 50, 50, 0.7);
+}
+
+.player{
+    display:inline-block;
+    width:100%;
+    text-align: center;
+    vertical-align: middle;
+    align-self: center;
 }

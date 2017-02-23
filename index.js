@@ -33,7 +33,6 @@ var default_rules = [
 
 app.get('*', (req, res) => {
     var t_url = req.url.split("?")[0]
-    console.log('VARS ' + req.url.split("?")[1]);
     var f_path = __dirname + '/client' + (t_url == "/" ? "/index.html" : t_url);
     fs.stat(f_path, (err, stat) => {
         if(err == null){
@@ -60,11 +59,11 @@ io.on('connection', (client) => {
         if(!g)return;
         var namelist = [];
         g.users.forEach((user) => {
-            user.client.emit('join_game', {name:data.name});
+            user.client.emit('join_game', {name:data.name, facebookProfilePicture:data.facebookProfilePicture});
             namelist.push(user.name);
         });
-        g.addUser(new User(data.name, client));
-        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist, rules:g.rules});
+        g.addUser(new User(data.name, client, data.facebookProfilePicture));
+        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist, rules:g.rules, facebookProfilePicture:data.facebookProfilePicture});
     });
 
     client.on('rotation_update', (data) => {
@@ -123,13 +122,15 @@ function shuffle(array) {
 }
 
 class User{
-    constructor(name, client){
+    constructor(name, client, profilePicture){
         this.name = name;
         this.client = client;
-        this.profilePicture = null;
+        this.profilePicture = profilePicture;
     }
 
-
+    setProfilePicture(picture){
+        this.profilePicture = profilePicture;
+    }
 }
 
 class Game {

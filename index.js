@@ -86,12 +86,13 @@ io.on('connection', (client) => {
         if(card.revealed || g.getActiveUser().client != client){
             return;
         }
+        g.progressRound();
+        data.activeUser = g.getActiveUser().name;
         card.revealed = true;
         g.users.forEach((user) => {
             user.client.emit('card_reveal', data);
         });
-        g.progressRound();
-        g.getActiveUser().client.emit('buzz');
+        //g.getActiveUser().client.emit('buzz');
     });
     client.on('info', (data)=>{
         console.log(data);

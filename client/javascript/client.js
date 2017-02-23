@@ -10,7 +10,7 @@
 var socket = io();
 var form = $("form");
 
-var username;
+var username, activeUser;
 
 form.submit(function () {
     socket.emit('message', $('#messaging').val());
@@ -33,6 +33,7 @@ socket.on('join_game', function (data) {
         $('#gameid').text('GameID: ' + data.token);
         current_rules = data.rules;
         $("#pullmenu").css('display', 'flex');
+        return;
     }
     $("#game_select").hide();
     addPlayer(data.name, data.facebookProfilePicture);
@@ -52,10 +53,8 @@ socket.on('rotation_update', function (data) {
 });
 
 socket.on('card_reveal', function (data) {
-    if (data.active) {
-        if(!nagivator.vibrate)return;
-        navigator.vibrate([100, 100, 100, 100, 100, 100, 100, 100]);
-    }
+    activeUser = data.activeUser;
+    $($('span:contains(' + activeUser + ')').parent()).css('border-left','15px solid red')
     cardContainer.children.forEach(function (child) {
         if (child._cHouse == data.house && child._cValue == data.value) {
             var im = new Image();
@@ -214,8 +213,11 @@ $("button:contains(You wanna fuck with the rules?)").on('click touchstart', func
 
 $("#facebook_button").on('click touchstart', (event) => {
     FB.getLoginStatus(function (response) {
+        console.log(response)
         if(facebookProfilePicture || facebook_name)return;
-        if (response.status == "connected") {
+        if (response.status === "connected") {
+            FB.logout();
+            return;
             facebookProfilePicture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
             FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
                 facebook_name = response.first_name + " " + response.last_name;
@@ -457,5 +459,9 @@ function toggleDisplayCard(house, value) {
         stage.removeChild(rule_text_background);
         displayCard = null;
         cardContainer.alpha = 1;
+        if (activeUser == username) {
+            if(!navigator || !navigator.vibrate)return;
+            navigator.vibrate([200,100,200,100,200]);
+        }
     }, 5000);
 }

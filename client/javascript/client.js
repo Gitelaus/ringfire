@@ -220,7 +220,7 @@ $('#guest_button').on('click touchstart', (event) => {
 $("#facebook_button").on('click touchstart', (event) => {
     FB.login((response) => {
         if (response.status === "connected") {
-            facebookProfilePicture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
+            facebookProfilePicture = "https://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
             FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
                 facebook_name = response.first_name + " " + response.last_name;
                 $('#login_form').hide();

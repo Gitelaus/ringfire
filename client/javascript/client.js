@@ -35,7 +35,7 @@ socket.on('join_game', function (data) {
         $("#pullmenu").css('display', 'flex');
     }
     $("#game_select").hide();
-    addPlayer(data.name, "https://graph.facebook.com/" + datafacebook_id + "/picture?type=normal");
+    addPlayer(data.name, "https://graph.facebook.com/" + data.facebook_id + "/picture?type=normal");
 });
 
 socket.on('buzz', function () {

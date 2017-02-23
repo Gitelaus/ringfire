@@ -156,7 +156,7 @@ $('#buttonConfirm').on('touchstart click', function () {
         gameid: $("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
         rules: current_rules
     }
-    socket.emit('join_game', dataPacket);
+    socket.emit('facebookProfilePicture', dataPacket);
     console.log(dataPacket);
 });
 

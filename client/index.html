@@ -15,10 +15,14 @@
 
         </canvas>
         <div id="overlay">
-            <section id="game_select">
+            <section id="login_form">
+                <button id="facebook_button">Facebook Login</button>
+                <button>Guest Login</button>
+            </section>
+            <section id="game_select" style="display:none">
                 <h1>Game Select</h1>
                 <div id="buttonContainer">
-                    <button style="cursor:pointer; pointer-events: all;" id="buttonCreate" onclick="return switchButtonMenu();">Create</button>
+                    <button style="cursor:pointer; pointer-events: all;" id="buttonCreate" onclick="void(0);">Create</button>
                     |
                     <button style="cursor:pointer; pointer-events: all;" id="buttonJoin" onclick="void(0);">Join</button>
                 <div>

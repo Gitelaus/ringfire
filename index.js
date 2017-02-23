@@ -126,7 +126,10 @@ class User{
     constructor(name, client){
         this.name = name;
         this.client = client;
+        this.profilePicture = null;
     }
+
+
 }
 
 class Game {

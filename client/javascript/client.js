@@ -38,7 +38,9 @@ socket.on('join_game', function (data) {
 });
 
 socket.on('buzz', function () {
-    if(!nagivator.vibrate)return;
+    if(!navigator || !navigator.vibrate) {
+        return;
+    }
     navigator.vibrate([100, 100, 100, 100, 100, 100, 100, 100]);
 });
 
@@ -93,8 +95,10 @@ VALUES.forEach(function (value) {
 var cardBaseTexture;
 var gamescreen;
 
-var originX, originY;
+var originX, originY, startRot;
 var ui = {};
+
+var facebook_name, facebook_picture;
 
 
 $("#textGameID").val(getParameterByName('game'));
@@ -151,15 +155,21 @@ $('#buttonConfirm').on('touchstart click', function () {
         gameid: $("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
         rules: current_rules
     });
-    FB.getLoginStatus(function (response) {
-        console.log(response);
-        if (response.status == "connected") {
-            console.log("http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal");
-        } else {
-            FB.login();
-        }
-    });
 });
+
+// var fbLogin = setInterval(() => {
+//     if(!FB){
+//         return;
+//     }
+//     FB.getLoginStatus(function (response) {
+//         if (response.status == "connected") {
+//             console.log("http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal");
+//             clearInterval(fbLogin);
+//         } else {
+//             FB.login();
+//         }
+//     });
+// }, 1000);
 
 $('#select_rule_value').change(function () {
     var i = 0;
@@ -195,6 +205,26 @@ $("button:contains(You wanna fuck with the rules?)").on('click touchstart', func
     var fadeTime = 500;
     $('#game_select').fadeToggle(fadeTime / 2, function () {
         $('#rule_editor').fadeToggle(fadeTime / 2);
+    });
+});
+
+$("#facebook_button").on('click touchstart', (event) => {
+    FB.getLoginStatus(function (response) {
+        if(facebook_picture && facebook_name)return;
+        if (response.status == "connected") {
+            facebook_picture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
+            FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
+                facebook_name = response.first_name + " " + response.last_name;
+                $('#login_form').hide();
+                $('#game_select').show();
+                $('<img>', {src:facebook_picture, class:'facebook_image'}).insertBefore($('#textName'));
+                $('#textName').replaceWith(() => {
+                    return $('<h3/>', {id:'textName',text:facebook_name,name:facebook_name});
+                })
+            });
+        } else {
+            FB.login();
+        }
     });
 });
 
@@ -270,15 +300,18 @@ function setup() {
         if (displayCard) return;
         originX = event.stageX;
         originY = event.stageY;
+        startRot = cardContainer.rotation;
     });
 
     stage.on("stagemouseup", function (event) {
+        if(startRot != cardContainer.rotation){
+             event.preventDefault();
+        }
         originX = null;
         originY = null;
     });
 
     stage.on("stagemousemove", function (event) {
-
         if (originY) {
             if (Math.abs(event.stageX - originX) > Math.abs(event.stageY - originY)) {
                 return;
@@ -342,6 +375,15 @@ function setDeck(deck) {
             //     character.alpha = 0.15;
             //     cardContainer.setChildIndex(character, 0);
             // }
+        });
+        character.on('mouseover', (event) => {
+            character.shadow = new createjs.Shadow("red", 0,0,5);
+            character.t_rotation = character.rotation;
+            character.rotation = 0;
+        });
+        character.on('mouseout', () => {
+            character.shadow = null;
+            character.rotation = character.t_rotation;
         });
         cardContainer.addChild(character);
         i++;

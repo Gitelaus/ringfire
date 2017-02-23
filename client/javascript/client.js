@@ -33,6 +33,7 @@ socket.on('join_game', function (data) {
         $('#gameid').text('GameID: ' + data.token);
         current_rules = data.rules;
         $("#pullmenu").css('display', 'flex');
+        $("#game_select").hide();
         return;
     }
     $("#game_select").hide();

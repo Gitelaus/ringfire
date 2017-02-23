@@ -59,11 +59,11 @@ io.on('connection', (client) => {
         if(!g)return;
         var namelist = [];
         g.users.forEach((user) => {
-            user.client.emit('join_game', {name:data.name, facebookProfilePicture:data.facebookProfilePicture});
+            user.client.emit('join_game', {name:data.name, facebook_id:data.facebook_id});
             namelist.push(user.name);
         });
-        g.addUser(new User(data.name, client, data.facebookProfilePicture));
-        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist, rules:g.rules, facebookProfilePicture:data.facebookProfilePicture});
+        g.addUser(new User(data.name, client, data.facebook_id));
+        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist, rules:g.rules, facebook_id:data.facebook_id});
     });
 
     client.on('rotation_update', (data) => {
@@ -123,10 +123,10 @@ function shuffle(array) {
 }
 
 class User{
-    constructor(name, client, profilePicture){
+    constructor(name, client, facebook_id){
         this.name = name;
         this.client = client;
-        this.profilePicture = profilePicture;
+        this.facebook_id = facebook_id;
     }
 
     setProfilePicture(picture){

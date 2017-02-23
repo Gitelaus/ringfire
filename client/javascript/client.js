@@ -97,7 +97,7 @@ var gamescreen;
 var originX, originY, startRot;
 var ui = {};
 
-var facebook_name, facebookProfilePicture;
+var facebook_id, facebook_name, facebookProfilePicture;
 
 
 $("#textGameID").val(getParameterByName('game'));
@@ -151,7 +151,7 @@ $('#buttonCreate').bind('touchstart click', function (e) {
 $('#buttonConfirm').on('touchstart click', function () {
     var dataPacket = {
         name: $("#textName").val() || $('#textName').text(),
-        facebookProfilePicture:facebookProfilePicture,
+        facebook_id:facebook_id,
         gameid: $("#textGameID").is(":visible") ? $("#textGameID").val() : "-c",
         rules: current_rules
     }
@@ -220,6 +220,7 @@ $('#guest_button').on('click touchstart', (event) => {
 $("#facebook_button").on('click touchstart', (event) => {
     FB.login((response) => {
         if (response.status === "connected") {
+            facebook_id = response.authReponse.userID;
             facebookProfilePicture = "https://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
             FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
                 facebook_name = response.first_name + " " + response.last_name;

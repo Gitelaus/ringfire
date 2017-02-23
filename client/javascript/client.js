@@ -323,7 +323,9 @@ function setup() {
             cardContainer.set({
                 rotation: cardContainer.rotation + (event.stageY - originY) / 5
             });
-            socket.emit('rotation_update', cardContainer.rotation + (event.stageY - originY) / 4);
+            if(activeUser == username){
+                socket.emit('rotation_update', cardContainer.rotation + (event.stageY - originY) / 4);
+            }
             originY = event.stageY;
             originX = event.stageX;
         }

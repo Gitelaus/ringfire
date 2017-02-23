@@ -216,8 +216,6 @@ $("#facebook_button").on('click touchstart', (event) => {
         console.log(response)
         if(facebookProfilePicture || facebook_name)return;
         if (response.status === "connected") {
-            FB.logout();
-            return;
             facebookProfilePicture = "http://graph.facebook.com/" + response.authResponse.userID + "/picture?type=normal";
             FB.api('/me', {fields: 'first_name,last_name'}, function(response) {
                 facebook_name = response.first_name + " " + response.last_name;

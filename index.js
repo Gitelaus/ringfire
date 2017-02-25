@@ -32,6 +32,7 @@ var default_rules = [
 //
 
 app.get('*', (req, res) => {
+    console.log(req.url);
     var t_url = req.url.split("?")[0]
     var f_path = __dirname + '/client' + (t_url == "/" ? "/index.html" : t_url);
     fs.stat(f_path, (err, stat) => {

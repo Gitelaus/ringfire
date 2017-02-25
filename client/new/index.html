@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title></title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
+        <link href="css/overlay.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="overlay" id="overlay">
+            <div class="pull_menu">
+                <div class="player_container">
+                    <img class="facebook_image"/>
+                    <span>Nathan Dawson</span>
+                </div>
+            </div>
+            <div class="social_navigation">
+                    <img class="facebook_image"/>
+                <span>Nathan Dawson</span>
+            </div>
+            
+            <div class="menu" id="facebook_login">
+                <span class="title">Facebook Login</span>
+                <p>
+                    We require you to have a Facebook account to play this game. We don't collect any
+                    information about you - I'm not smart enough to do that.
+                </p>
+                <span class="status_message pulsate">Please wait, connecting to Facebook</span>
+                <button id="facebook_button">Login with Facebook</button>
+            </div>
+
+        </div>
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({
+                appId      : '247109212415502',
+                xfbml      : true,
+                version    : 'v2.8'
+                });
+                FB.AppEvents.logPageView();
+            };
+
+            (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+        <script src="/javascript/hammer.min.js"></script>
+        <script src="javascript/networking.js"></script>
+        <script src="javascript/ui_controller.js"></script>
+    </body>
+</html>

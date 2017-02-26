@@ -73,6 +73,9 @@ body, html {
     @media screen and (orientation: landscape) {
       .overlay .menu {
         width: 50%; } }
+    @media screen and (orientation: portrait) {
+      .overlay .menu {
+        margin-top: 20%; } }
     .overlay .menu .title {
       font-size: 48px;
       text-align: center;
@@ -88,9 +91,9 @@ body, html {
     .overlay .menu .tab_container {
       width: 100%;
       display: flex;
-      justify-content: space-around; }
+      justify-content: space-between; }
     .overlay .menu #game_list {
-      height: 156px;
+      height: 160px;
       border: 2px white solid;
       overflow-y: auto; }
       .overlay .menu #game_list .game_listing {
@@ -103,8 +106,9 @@ body, html {
         .overlay .menu #game_list .game_listing:nth-child(odd) {
           background: rgba(80, 80, 80, 0.7); }
         .overlay .menu #game_list .game_listing img {
-          height: 80%;
-          border: 2px solid black; }
+          height: 60%;
+          border: 2px solid black;
+          margin: 0px 2.5px; }
     .overlay .menu span {
       text-align: center; }
     .overlay .menu p {
@@ -119,27 +123,28 @@ body, html {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     position: absolute;
-    right: 15px;
-    top: 15px;
+    right: 0;
+    top: 0px;
     color: white;
     background: rgba(30, 30, 30, 0.7);
-    border: 1px solid black;
+    border: 2px solid black;
     box-shadow: 10px 10px rgba(0, 0, 0, 0.5);
     opacity: 0; }
     .overlay .social_navigation img {
-      height: 80px;
-      width: 80px;
+      height: 64px;
+      width: 64px;
       margin: 10px;
       border: 3px solid black; }
-    .overlay .social_navigation span {
-      display: block;
-      width: 100%;
-      font-size: 20px;
+    .overlay .social_navigation p {
+      max-width: 120px;
+      height: 50px;
+      font-size: 24px;
       text-align: center;
       background: black;
-      word-break: break-all; }
+      text-overflow: ellipsis; }
+  .overlay #join_game {
+    opacity: 0; }
   .overlay .pull_menu {
     position: absolute;
     width: 50%;

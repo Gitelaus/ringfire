@@ -17,8 +17,7 @@
             </div>
             <div class="social_navigation">
                 <img class="facebook_image"/>
-                <span class="facebook_name"></span>
-                <button id="facebook_logout">Logout</button>
+                <p class="facebook_name"></p>
             </div>
             
             <div class="menu" id="facebook_login">
@@ -30,44 +29,14 @@
                 <span class="status_message pulsate">Please wait, connecting to Facebook</span>
                 <button id="facebook_button">Login with Facebook</button>
             </div>
-            <div class="menu" id="game_select"  style="display:none">
-                <span class="title">Game Select</span>
-                <div class="tab_container">
-                    <button>Create Game</button>
-                    <button>Join Game</button>
-                </div>
-            </div>
             <div class="menu" id="join_game"  style="display:none">
                 <span class="title">Join Game</span>
                 <div id="game_list">
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
-                    <div class="game_listing">
-                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
-                    </div>
                 </div>
                 <div class="tab_container">
-                    <button>Refresh</button>
-                    <button>Join</button>
+                    <button id="refresh_game_button">Refresh</button>
+                    <button id="create_game_button">Create</button>
+                    <button id="join_game_button">Join</button>
                 </div>
             </div>
         </div>
@@ -89,8 +58,9 @@
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
         </script>
+        <script src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
-        <script src="/javascript/hammer.min.js"></script>
+        <script src="javascript/hammer.min.js"></script>
         <script src="javascript/networking.js"></script>
         <script src="javascript/ui_controller.js"></script>
     </body>

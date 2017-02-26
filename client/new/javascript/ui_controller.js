@@ -5,7 +5,7 @@ ad.addEventListener('endeded', () => {
     this.currentTime = 0;
     this.play();
 });
-ad.volume = 0.2;
+ad.volume = 0.05;
 ad.play();
 
 // Buttons(

@@ -1,12 +1,10 @@
 // Audio
 
 var ad = new Audio("resources/if_playing_the_piano_makes_me_a_pianist_does_playing_an_electric_one_make_me_a_vibrator.mp3");
-ad.addEventListener('endeded', () => {
-    this.currentTime = 0;
-    this.play();
+
+document.getElementById('facebook_button').addEventListener('click', ()=>{
+    ad.play();
 });
-ad.volume = 0.05;
-ad.play();
 
 // Buttons(
 $('#facebook_button').on('click touchstart', (event)=>{

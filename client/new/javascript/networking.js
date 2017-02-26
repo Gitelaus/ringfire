@@ -8,6 +8,11 @@ function login(callback){
     return callback(null);
 }
 
-function logout(){
-
+function logout(callback){
+    FB.logout((response) => {
+        if(response.status != "connected"){
+            callback(true);
+        }
+    });
+    callback(false);
 }

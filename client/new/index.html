@@ -3,7 +3,7 @@
     <head>
         <title></title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, height=device-height">
         <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
         <link href="css/overlay.css" rel="stylesheet">
     </head>
@@ -12,12 +12,13 @@
             <div class="pull_menu">
                 <div class="player_container">
                     <img class="facebook_image"/>
-                    <span>Nathan Dawson</span>
+                    <span class="facebook_name"></span>
                 </div>
             </div>
             <div class="social_navigation">
-                    <img class="facebook_image"/>
-                <span>Nathan Dawson</span>
+                <img class="facebook_image"/>
+                <span class="facebook_name"></span>
+                <button id="facebook_logout">Logout</button>
             </div>
             
             <div class="menu" id="facebook_login">
@@ -29,7 +30,46 @@
                 <span class="status_message pulsate">Please wait, connecting to Facebook</span>
                 <button id="facebook_button">Login with Facebook</button>
             </div>
-
+            <div class="menu" id="game_select"  style="display:none">
+                <span class="title">Game Select</span>
+                <div class="tab_container">
+                    <button>Create Game</button>
+                    <button>Join Game</button>
+                </div>
+            </div>
+            <div class="menu" id="join_game"  style="display:none">
+                <span class="title">Join Game</span>
+                <div id="game_list">
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                    <div class="game_listing">
+                        <img src="http://graph.facebook.com/10155124329484047/picture?height=128" />
+                    </div>
+                </div>
+                <div class="tab_container">
+                    <button>Refresh</button>
+                    <button>Join</button>
+                </div>
+            </div>
         </div>
         <script>
             window.fbAsyncInit = function() {

@@ -40,13 +40,11 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-body {
-  background: url("../resources/congruent_pentagon.png");
-  font-family: "Unica One"; }
-
 body, html {
   width: 100%;
   height: 100%;
+  background: url("../resources/congruent_pentagon.png");
+  font-family: "Unica One";
   overflow: hidden; }
 
 .overlay {
@@ -54,25 +52,27 @@ body, html {
   z-index: 1;
   display: flex;
   justify-content: center;
-  align-content: center;
+  align-items: center;
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  overflow: hidden; }
   .overlay .menu {
     display: flex;
     flex-direction: column;
-    align-content: center;
     background: rgba(30, 30, 30, 0.7);
     color: white;
     border: 2px solid black;
     box-shadow: 10px 10px rgba(0, 0, 0, 0.5);
-    padding: 15px;
-    margin-top: auto;
-    margin-bottom: auto;
-    max-width: 300px;
+    padding: 10px;
+    width: 80%;
+    max-width: 500px;
     max-height: 80%; }
     @media screen and (max-width: 500px) {
       .overlay .menu {
-        width: 60%; } }
+        width: 80%; } }
+    @media screen and (orientation: landscape) {
+      .overlay .menu {
+        width: 50%; } }
     .overlay .menu .title {
       font-size: 48px;
       text-align: center;
@@ -85,10 +85,36 @@ body, html {
       font-weight: 600;
       margin: 20px 0px;
       display: none; }
+    .overlay .menu .tab_container {
+      width: 100%;
+      display: flex;
+      justify-content: space-around; }
+    .overlay .menu #game_list {
+      height: 156px;
+      border: 2px white solid;
+      overflow-y: auto; }
+      .overlay .menu #game_list .game_listing {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        height: 64px;
+        background: rgba(30, 30, 30, 0.7); }
+        .overlay .menu #game_list .game_listing:nth-child(odd) {
+          background: rgba(80, 80, 80, 0.7); }
+        .overlay .menu #game_list .game_listing img {
+          height: 80%;
+          border: 2px solid black; }
     .overlay .menu span {
       text-align: center; }
     .overlay .menu p {
       text-align: center; }
+    .overlay .menu input[type=text] {
+      font-family: "Unica One";
+      outline: none;
+      border: 2px white solid;
+      background: black;
+      color: white; }
   .overlay .social_navigation {
     display: flex;
     flex-direction: column;
@@ -103,21 +129,22 @@ body, html {
     box-shadow: 10px 10px rgba(0, 0, 0, 0.5);
     opacity: 0; }
     .overlay .social_navigation img {
-      height: 100px;
-      width: 100px;
-      margin: 15px;
+      height: 80px;
+      width: 80px;
+      margin: 10px;
       border: 3px solid black; }
     .overlay .social_navigation span {
       display: block;
       width: 100%;
       font-size: 20px;
       text-align: center;
-      background: black; }
+      background: black;
+      word-break: break-all; }
   .overlay .pull_menu {
     position: absolute;
     width: 50%;
     height: 100%;
-    max-width: 200px;
+    max-width: 220px;
     right: -300px;
     background: rgba(30, 30, 30, 0.7);
     border-left: 2px solid black; }
@@ -128,11 +155,13 @@ body, html {
       width: 100%;
       height: 60px;
       background: rgba(50, 50, 50, 0.8);
-      border-bottom: 2px solid black; }
+      border-bottom: 1px solid black;
+      border-top: 1px solid black; }
       .overlay .pull_menu .player_container img {
         height: 80%;
         margin: 10% 5px;
-        align-self: center; }
+        align-self: center;
+        border: 1px solid black; }
       .overlay .pull_menu .player_container span {
         text-align: center;
         font-size: 20px;
@@ -143,9 +172,10 @@ body, html {
     font-family: "Unica One";
     font-size: 18px;
     border: 2px solid white;
-    padding: 5px 10px;
+    padding: 10px 15px;
     margin: 10px 0px;
-    outline: none; }
+    outline: none;
+    min-height: 45px; }
     .overlay button:active {
       outline: none;
       border: 2px solid black;

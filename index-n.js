@@ -56,7 +56,7 @@ io.on('connection', (client) => {
         updateGameClients(t_game, 'new_client', {name:t_user.name,id:t_user.id}); 
         t_game.addUser(t_user);
         var d = t_game.users.map(x => new NetworkUser(x));
-        client.emit('join_game', {users:d, deck:g.deck});
+        client.emit('join_game', {users:d, deck:t_game.deck});
     });
 
     // Facebook Check Games

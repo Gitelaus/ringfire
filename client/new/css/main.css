@@ -190,6 +190,33 @@ body, html {
       background: white;
       color: black; }
 
+#announcement {
+  position: absolute;
+  z-index: 100;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  overflow: hidden; }
+  #announcement img {
+    margin: 10px;
+    padding: 20px;
+    border: 1px white solid;
+    background: rgba(0, 0, 0, 0.7); }
+  #announcement span {
+    display: block;
+    text-align: center;
+    font-size: 20px;
+    width: 80%;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    border: 4px white solid; }
+
 .inverted_text {
   color: black;
   background: white; }

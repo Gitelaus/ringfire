@@ -14,8 +14,8 @@ function toggleMenu(id){
 
 // Buttons(
 $('#facebook_button').on('click', (event)=>{
-    //ad.volume = 0.1;
-    //ad.play();
+    ad.volume = 0.1;
+    ad.play();
     login((facebook_info) => {
         if(facebook_info){
             toggleMenu('join_game');
@@ -69,16 +69,27 @@ function addPlayer(f_user){
     var t_container = $("<div/>", {
         class:'player_container'
     });
-    t_img = $('<img/>', {
+    var t_img = $('<img/>', {
         class:'facebook_image',
         src:'http://graph.facebook.com/'  + f_user.id + '/picture?height=128&width=128'
     });
-    t_span = $("<span/>", {
+    var t_span = $("<span/>", {
         text:f_user.name
     });
 
     t_container.append(t_img).append(t_span);
     $('.pull_menu').append(t_container);
+}
+
+function showMessageAnnoucement(picture, message, finishedCallback){
+    $('#announcement>span').text(message);
+    $('#announcement').fadeTo(250, 1, () => {
+        setTimeout(() => {
+            $('#announcement').fadeTo(1250, 0, () => {
+                if(finishedCallback)finishedCallback();
+            });
+        }, 3000);
+    });
 }
 
 // Pull in TODO: Generalise

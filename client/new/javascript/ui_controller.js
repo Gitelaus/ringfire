@@ -82,6 +82,10 @@ function addPlayer(f_user){
 
     t_container.append(t_img).append(t_span);
     $('.pull_menu').append(t_container);
+    if(f_user.id == facebook_info.id)return;
+    $('#social_round_bar').append($('<img/>', {
+        src:'http://graph.facebook.com/'  + f_user.id + '/picture?height=50&width=50'
+    }));
 }
 
 function showMessageAnnoucement(picture, message, finishedCallback){

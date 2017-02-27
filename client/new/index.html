@@ -5,9 +5,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, height=device-height">
         <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
-        <link href="css/overlay.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
     </head>
     <body>
+        <canvas id="gamescreen">
+
+        </canvas>
         <div class="overlay" id="overlay">
             <div class="pull_menu">
                 <div class="player_container">
@@ -36,7 +39,6 @@
                 <div class="tab_container">
                     <button id="refresh_game_button">Refresh</button>
                     <button id="create_game_button">Create</button>
-                    <button id="join_game_button">Join</button>
                 </div>
             </div>
         </div>
@@ -60,8 +62,10 @@
         </script>
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
         <script src="javascript/hammer.min.js"></script>
         <script src="javascript/networking.js"></script>
         <script src="javascript/ui_controller.js"></script>
+        <script src="javascript/canvas_controller.js"></script>
     </body>
 </html>

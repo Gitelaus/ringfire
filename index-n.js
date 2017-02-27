@@ -31,6 +31,7 @@ var User        = require('./custom_c/user.js');
 var NetworkUser = require('./custom_c/network_user.js');
 var Card        = require('./custom_c/card.js');
 
+
 var game_master_list = new Array();
 
 io.on('connection', (client) => {
@@ -64,10 +65,8 @@ io.on('connection', (client) => {
     //  friend{
     //      id,
     //      name
-    //  }
-        
+    //  }        
     client.on('facebook_check_games', (data)=>{
-        console.log("got request");
         var friendGames = new Array();
         data.forEach((friend) => {
             var t_game = findGameByUser(friend.id);
@@ -76,7 +75,27 @@ io.on('connection', (client) => {
             }
         });
         client.emit('update_games_list', friendGames);
-    })
+    });
+
+
+    client.on('card_reveal', (data) => {
+        var t_game = findGameByClient(client);
+        var t_user = findUserByValue(t_game, 'client', client)
+        if(t_game.getActiveUser() !== t_user){
+            return;    
+        }
+        t_game.deck.find(x => x.house == data.house && x.value == data.value).revealed = true;
+        updateGameClients(t_game,'card_reveal',data);
+        t_game.advanceRound(); 
+    });
+
+    client.on('disconnect', () => {
+        var t_game = findGameByClient(client);
+        var t_user = findUserByValue(t_game, 'client', client);
+        if(t_game && t_user && t_game.removeUser(t_user)){
+            game_master_list = game_master_list.filter(g => g !== t_game);
+        }
+    });
 });
 
 function updateGameClients(game, message, data){
@@ -91,8 +110,13 @@ function findGameByUser(userID){
                                 i_user => i_user.id == userID));
 }
 
-function findUserByValue(value, matchValue){
+function findUserByValue(game, value, matchValue){
+    if(!game)return null;
+    return game.users.find(i_user => i_user[value] == matchValue);
+}
+
+function findGameByClient(client){
     return game_master_list.find(
-                        i_game => i_game.users.find(
-                            i_user => i_user[value] == matchValue));
+                            i_game => i_game.users.find(
+                                i_user => i_user.client == client));
 }

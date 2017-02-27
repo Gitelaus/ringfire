@@ -58,6 +58,10 @@ function refreshGamesList(){
     });
 }
 
+function sendPacket(name, packet){
+    socket.emit(name, packet);
+}
+
 function getUserImage(userID, callback){
     FB.api('/' + userID + '/picture?height=80', (response) => {
         callback(response.data);
@@ -72,6 +76,15 @@ function getUserImage(userID, callback){
 //  Deck
 socket.on('join_game', (data) => {
     toggleMenu();
+    setupCanvas();
+    createDeck(data.deck);
+    data.users.forEach((user) => {
+        addPlayer(user);
+    });
+});
+
+socket.on('new_client', (data)=>{
+    addPlayer(data);
 })
 
 socket.on('update_games_list', (games) => {
@@ -79,4 +92,8 @@ socket.on('update_games_list', (games) => {
     games.forEach((i_game) => {
         addGameListing(i_game);
     });
+});
+
+socket.on('card_reveal', (data) => {
+    revealCard(data.house, data.value);
 });

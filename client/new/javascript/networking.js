@@ -96,6 +96,8 @@ socket.on('update_games_list', (games) => {
 
 socket.on('card_reveal', (data) => {
     revealCard(data.house, data.value);
-    showMessageAnnoucement('', 'Card got drawn, bitch!', () =>{
+    var str = "/images/cards/card" + (data.house + data.value) + ".png"
+    showMessageAnnoucement(str, data.rule, () =>{
+    
     });
 });

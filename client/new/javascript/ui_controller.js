@@ -14,8 +14,8 @@ function toggleMenu(id){
 
 // Buttons(
 $('#facebook_button').on('click', (event)=>{
-    ad.volume = 0.1;
-    ad.play();
+    // ad.volume = 0.1;
+    // ad.play();
     login((facebook_info) => {
         if(facebook_info){
             toggleMenu('join_game');
@@ -28,13 +28,16 @@ $('#facebook_button').on('click', (event)=>{
 
 $('#facebook_logout').on('click', (event)=>{
     logout((success) => {
-        toggleMenu('facebook_login')
+        toggleMenu('facebook_login');
         $('.social_navigation').animate({'opacity':'0'}, 1000);
         $('.facebook_image').attr('src', null);
         $('.facebook_name').text('');
     })
 });
 
+$(window).on('resize', () =>{
+    $('#overlay').css({width:window.width,height:window.height});
+});
 
 $('#create_game_button').on('click', (event)=>{
     createGame();
@@ -82,30 +85,32 @@ function addPlayer(f_user){
 }
 
 function showMessageAnnoucement(picture, message, finishedCallback){
+    $('#announcement').css('pointer-events','all');
     $('#announcement>span').text(message);
+    $('#announcement>img').attr('src',picture);
     $('#announcement').fadeTo(250, 1, () => {
         setTimeout(() => {
             $('#announcement').fadeTo(1250, 0, () => {
+                $('#announcement').css('pointer-events','none');
                 if(finishedCallback)finishedCallback();
             });
         }, 3000);
     });
 }
 
+$(document).on('dragstart','img', function(event) { event.preventDefault(); });
+
 // Pull in TODO: Generalise
 
 var hammertime = new Hammer(document.getElementById('overlay'));
-var blocked = 2;
 hammertime.on('swipeleft', function () {
-    if(blocked < 2)return;
-    blocked = 0;
-    $('.social_navigation').animate({'right':-$(".social_navigation").width() - 2}, 400, ()=>{blocked++;});
-    $('.pull_menu').animate({'right':'0px'}, 400, ()=>{blocked++});
+    $('.social_navigation').animate({'right':-$(".social_navigation").width() - 2}, 400);
+    $('.pull_menu').animate({'right':'0px'}, 400);
+    $('#social_round_bar').animate({'right':-$('#social_round_bar').width()});
 });
 
 hammertime.on('swiperight', function () {
-    if(blocked < 2)return;
-    blocked = 0;
-    $('.pull_menu').animate({'right':-$('.pull_menu').width()}, 400, ()=>{blocked++});
-    $('.social_navigation').animate({'right':'15px'}, 400, ()=>{blocked++});
+    $('.pull_menu').animate({'right':-$('.pull_menu').width()}, 400);
+    $('.social_navigation').animate({'right':'0px'}, 400);
+    $('#social_round_bar').animate({'right':'0px'});
 });

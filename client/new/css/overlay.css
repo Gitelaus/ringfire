@@ -51,6 +51,7 @@ body, html {
   position: absolute;
   z-index: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -78,7 +79,7 @@ body, html {
         width: 50%; } }
     @media screen and (orientation: portrait) {
       .overlay .menu {
-        margin-top: 20%; } }
+        margin-top: 30%; } }
     .overlay .menu .title {
       font-size: 48px;
       text-align: center;
@@ -146,6 +147,23 @@ body, html {
       text-align: center;
       background: black;
       text-overflow: ellipsis; }
+  .overlay #social_round_bar {
+    position: absolute;
+    display: flex; }
+    @media screen and (orientation: landscape) {
+      .overlay #social_round_bar {
+        bottom: 0px;
+        right: 0px;
+        flex-direction: row; } }
+    @media screen and (orientation: portrait) {
+      .overlay #social_round_bar {
+        right: 0px;
+        top: 156px;
+        flex-direction: column; } }
+    .overlay #social_round_bar img {
+      margin: 5px;
+      border: 2px solid black;
+      box-shadow: 5px 5px rgba(0, 0, 0, 0.5); }
   .overlay #join_game {
     opacity: 0; }
   .overlay .pull_menu {

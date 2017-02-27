@@ -45,6 +45,32 @@ function setupCanvas(){
 
     createjs.Ticker.addEventListener("tick", update);
     createjs.Ticker.setFPS(40);
+
+    $(window).on('resize',()=>{
+        gamescreen.setAttribute('width', parseInt(window.innerWidth));
+        gamescreen.setAttribute('height', parseInt(window.innerHeight));
+        cardContainer.set({
+            y:gamescreen.height / 2
+        });
+        var i = 0;
+        var centerX = 0;
+        var centerY = 0;
+        var radius = (gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.25) * 0.3;
+        var scale = Math.min(((gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.5) * 0.001), 0.9);
+        var desiredRadianAngleOnCircle = Math.PI * 2 / 52;
+        cardContainer.children.forEach((child) => {
+            var x = centerX + radius * Math.cos(desiredRadianAngleOnCircle * i);
+            var y = centerY + radius * Math.sin(desiredRadianAngleOnCircle * i);
+            child.set({
+                x: x,
+                y: y,
+                rotation: (i + 26) / 52 * 360,
+                scaleX:scale,
+                scaleY:scale
+            });
+            i++;
+        });
+    })
 }
 
 
@@ -55,7 +81,7 @@ function update(){
 
 function createCard(house, value, revealed){
     var t_bitmap = new createjs.Bitmap(!revealed ? "/images/cards/cardBack_green1.png" : "/images/cards/card" + house + value + ".png");
-    var scale = (gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.5) * 0.001;
+    var scale = Math.min(((gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.5) * 0.001), 0.9);
     t_bitmap.set({
         hidden_value: "images/cards/card" + house + value + ".png",
         regX: 140 / 2,
@@ -99,8 +125,7 @@ function revealCard(house, value){
             var im = new Image();
             im.src = card.hidden_value;
             card.image = im;
-            console.log('set');
+            cardContainer.setChildIndex(card, 0);
         }
     });
-    console.log('done');
 }

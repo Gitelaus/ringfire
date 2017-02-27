@@ -30,7 +30,7 @@ var NetworkGame = require('./custom_c/network_game.js');
 var User        = require('./custom_c/user.js');
 var NetworkUser = require('./custom_c/network_user.js');
 var Card        = require('./custom_c/card.js');
-
+var Settings    = require('./custom_c/settings.js');
 
 var game_master_list = new Array();
 
@@ -85,6 +85,8 @@ io.on('connection', (client) => {
             return;    
         }
         t_game.deck.find(x => x.house == data.house && x.value == data.value).revealed = true;
+        data.rule = Settings.default_rules.find(x => x.value == data.value).rule;
+        
         updateGameClients(t_game,'card_reveal',data);
         t_game.advanceRound(); 
     });

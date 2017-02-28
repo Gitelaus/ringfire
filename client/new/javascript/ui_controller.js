@@ -53,6 +53,15 @@ $('#refresh_game_button').on('click', () => {
 });
 
 function addGameListing(game){
+    if(game == null){
+        var game_listing = $('<a/>', {
+            class:'game_listing',
+            text:'No games found!',
+            style:'height:100%'
+        });
+        $('#game_list').append(game_listing);
+        return;
+    }
     var game_listing = $('<a/>', {
         class:'game_listing',
         href:'#',

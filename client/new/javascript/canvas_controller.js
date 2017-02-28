@@ -80,7 +80,7 @@ function update(){
 }
 
 function createCard(house, value, revealed){
-    var t_bitmap = new createjs.Bitmap(!revealed ? "/images/cards/cardBack_green1.png" : "/images/cards/card" + house + value + ".png");
+    var t_bitmap = new createjs.Bitmap(!revealed ? "images/cards/cardBack_green1.png" : "images/cards/card" + house + value + ".png");
     var scale = Math.min(((gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.5) * 0.001), 0.9);
     t_bitmap.set({
         hidden_value: "images/cards/card" + house + value + ".png",

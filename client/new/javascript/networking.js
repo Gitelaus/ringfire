@@ -33,7 +33,7 @@ function getFacebookAppFriends(callback){
 
 // SocketIO
 
-var socket = io();
+var socket = io('https://ringfire.herokuapp.com');
 
 function createGame(){
     var data = {
@@ -93,15 +93,17 @@ socket.on('disconnect_client', (data) => {
 });
 
 socket.on('update_games_list', (games) => {
-    console.log("got game update");
     games.forEach((i_game) => {
         addGameListing(i_game);
     });
+    if(games.length < 1){
+        addGameListing(null);
+    }
 });
 
 socket.on('card_reveal', (data) => {
     revealCard(data.house, data.value);
-    var str = "/images/cards/card" + (data.house + data.value) + ".png"
+    var str = "images/cards/card" + (data.house + data.value) + ".png"
     showMessageAnnoucement(str, data.rule, () =>{
         setActivePlayer(data.activeUser);
     });

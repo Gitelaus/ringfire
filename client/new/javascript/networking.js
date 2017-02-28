@@ -81,11 +81,16 @@ socket.on('join_game', (data) => {
     data.users.forEach((user) => {
         addPlayer(user);
     });
+    setActivePlayer(data.activeUser);
 });
 
 socket.on('new_client', (data)=>{
     addPlayer(data);
-})
+});
+
+socket.on('disconnect_client', (data) => {
+    removePlayer(data);
+});
 
 socket.on('update_games_list', (games) => {
     console.log("got game update");
@@ -98,6 +103,7 @@ socket.on('card_reveal', (data) => {
     revealCard(data.house, data.value);
     var str = "/images/cards/card" + (data.house + data.value) + ".png"
     showMessageAnnoucement(str, data.rule, () =>{
-    
+        setActivePlayer(data.activeUser);
     });
 });
+

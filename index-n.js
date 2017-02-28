@@ -54,10 +54,10 @@ io.on('connection', (client) => {
                 game_master_list.push(t_game);
                 break;
         }
-        updateGameClients(t_game, 'new_client', {name:t_user.name,id:t_user.id}); 
+        sendGamePacket(t_game, 'new_client', {name:t_user.name,id:t_user.id}); 
         t_game.addUser(t_user);
         var d = t_game.users.map(x => new NetworkUser(x));
-        client.emit('join_game', {users:d, deck:t_game.deck});
+        client.emit('join_game', {users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
     });
 
     // Facebook Check Games
@@ -86,21 +86,25 @@ io.on('connection', (client) => {
         }
         t_game.deck.find(x => x.house == data.house && x.value == data.value).revealed = true;
         data.rule = Settings.default_rules.find(x => x.value == data.value).rule;
-        
-        updateGameClients(t_game,'card_reveal',data);
         t_game.advanceRound(); 
+        data.activeUser = new NetworkUser(t_game.getActiveUser());
+        sendGamePacket(t_game,'card_reveal',data);
     });
 
     client.on('disconnect', () => {
         var t_game = findGameByClient(client);
         var t_user = findUserByValue(t_game, 'client', client);
-        if(t_game && t_user && t_game.removeUser(t_user)){
-            game_master_list = game_master_list.filter(g => g !== t_game);
+        if(t_game && t_user){
+            var n_user = new NetworkUser(t_user);
+            if(t_game.removeUser(t_user)){
+                game_master_list = game_master_list.filter(g => g !== t_game);    
+            }
+            sendGamePacket(t_game, 'disconnect_client', n_user);
         }
     });
 });
 
-function updateGameClients(game, message, data){
+function sendGamePacket(game, message, data){
     game.users.forEach((user) => {
         user.client.emit(message, data);
     });

@@ -163,7 +163,7 @@ body, html {
     .overlay #social_round_bar img {
       margin: 5px;
       border: 2px solid black;
-      box-shadow: 5px 5px rgba(0, 0, 0, 0.5); }
+      box-shadow: 0 0 0 0 black; }
   .overlay #join_game {
     opacity: 0; }
   .overlay .pull_menu {
@@ -233,7 +233,11 @@ body, html {
     width: 80%;
     color: white;
     background: rgba(0, 0, 0, 0.7);
-    border: 4px white solid; }
+    border: 2px white solid;
+    padding: 5px; }
+
+.img_pulse {
+  animation: pulse 0.5s 5 cubic-bezier(0.66, 0, 0, 1); }
 
 .inverted_text {
   color: black;
@@ -251,6 +255,10 @@ body, html {
     opacity: 1; }
   100% {
     opacity: 0; } }
+
+@keyframes pulse {
+  to {
+    box-shadow: 0 0 0 15px rgba(232, 76, 61, 0); } }
 
 #gamescreen {
   position: absolute; }

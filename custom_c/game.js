@@ -35,7 +35,6 @@ class Game {
 
     removeUser(user){
         this.users = this.users.filter(u => u !== user);
-        console.log(this.users);
         if(this.users.length < 1){
             return true;
         }

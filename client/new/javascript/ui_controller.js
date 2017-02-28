@@ -22,6 +22,7 @@ $('#facebook_button').on('click', (event)=>{
             $('.social_navigation').animate({'opacity':'1'}, 1000);
             $('.facebook_image').attr('src', 'http://graph.facebook.com/'  + facebook_info.id + '/picture?height=128&width=128');
             $('.facebook_name').text(facebook_info.name);
+            refreshGamesList(); 
         }
     })
 });
@@ -86,6 +87,36 @@ function addPlayer(f_user){
     $('#social_round_bar').append($('<img/>', {
         src:'http://graph.facebook.com/'  + f_user.id + '/picture?height=50&width=50'
     }));
+}
+
+function removePlayer(f_user){
+    $('span:contains(' + f_user.name + ')').parent().remove();
+    $('img[src*=' + f_user.id + ']').remove();
+}
+
+function setActivePlayer(f_user){
+    $('span:not(:contains(' + f_user.name + '))').parent().css('background', 'rgba(0,0,0,0.5)');
+    $('span:contains(' + f_user.name + ')').parent().css('background', 'rgba(0,200,0,0.5)');
+    if(f_user.id == facebook_info.id){
+        $('.social_navigation').css('border','2px solid green');
+        $('.social_navigation').addClass("img_pulse");
+        $('.social_navigation').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function (e) {
+            $('.social_navigation').removeClass('img_pulse');
+        });
+        if(navigator && navigator.vibrate){
+            navigator.vibrate([100, 100, 100, 100, 100, 100]);
+        }
+        return;
+    }else{
+        $('.social_navigation').css('border','2px solid black');
+    }
+    $('#social_round_bar>img').css('border','2px solid black');
+    var t_img = $('#social_round_bar>img[src*=' + f_user.id + ']');
+    t_img.css('border','2px solid green');
+    t_img.addClass("img_pulse");
+    t_img.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function (e) {
+        t_img.removeClass('img_pulse');
+    });
 }
 
 function showMessageAnnoucement(picture, message, finishedCallback){

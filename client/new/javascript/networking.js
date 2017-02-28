@@ -33,7 +33,7 @@ function getFacebookAppFriends(callback){
 
 // SocketIO
 
-var socket = io('https://ringfire.herokuapp.com');
+var socket = io('ringfire.herokuapp.com');
 
 function createGame(){
     var data = {
@@ -77,6 +77,7 @@ function getUserImage(userID, callback){
 socket.on('join_game', (data) => {
     toggleMenu();
     setupCanvas();
+    console.log(data.deck[0].revealed);
     createDeck(data.deck);
     data.users.forEach((user) => {
         addPlayer(user);

@@ -44,8 +44,7 @@ body, html {
   width: 100%;
   height: 100%;
   font-family: "Unica One";
-  overflow: hidden;
-  background: url("../resources/congruent_pentagon.png"); }
+  overflow: hidden; }
 
 .overlay {
   position: absolute;

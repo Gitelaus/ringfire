@@ -13,7 +13,7 @@ function setupCanvas(){
     stage.enableMouseOver(10);
     stage.mouseMoveOutside = true;
     createjs.Touch.enable(stage);
-
+    //chalice by MRFA from the Noun Project
     stage.on('stagemousedown',  (e) => {
         mouseX = e.stageX;
         mouseY = e.stageY;
@@ -53,9 +53,9 @@ function setupCanvas(){
             y:gamescreen.height / 2
         });
         var i = 0;
-        var centerX = 0;
+        var centerX = gamescreen.width / 2;
         var centerY = 0;
-        var radius = (gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.25) * 0.3;
+        var radius = (gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.25) * 0.175;
         var scale = Math.min(((gamescreen.width > gamescreen.height ? gamescreen.width : gamescreen.height * 1.5) * 0.001), 0.9);
         var desiredRadianAngleOnCircle = Math.PI * 2 / 52;
         cardContainer.children.forEach((child) => {
@@ -100,6 +100,7 @@ function createDeck(deck){
     var desiredRadianAngleOnCircle = Math.PI * 2 / 52;
     deck.forEach((i_card) => {
         var card = createCard(i_card.house, i_card.value, i_card.revealed);
+        console.log(i_card.revealed);
         var x = centerX + radius * Math.cos(desiredRadianAngleOnCircle * i);
         var y = centerY + radius * Math.sin(desiredRadianAngleOnCircle * i);
         card.set({

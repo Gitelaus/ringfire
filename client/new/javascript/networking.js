@@ -75,7 +75,6 @@ function getUserImage(userID, callback) {
 socket.on('join_game', function (data) {
     toggleMenu();
     setupCanvas();
-    console.log(data.deck[0].revealed);
     createDeck(data.deck);
     data.users.forEach(function (user) {
         addPlayer(user);

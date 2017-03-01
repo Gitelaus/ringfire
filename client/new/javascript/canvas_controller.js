@@ -97,7 +97,6 @@ function createDeck(deck) {
     var desiredRadianAngleOnCircle = Math.PI * 2 / 52;
     deck.forEach(function (i_card) {
         var card = createCard(i_card.house, i_card.value, i_card.revealed);
-        console.log(i_card.revealed);
         var x = centerX + radius * Math.cos(desiredRadianAngleOnCircle * i);
         var y = centerY + radius * Math.sin(desiredRadianAngleOnCircle * i);
         card.set({

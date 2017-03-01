@@ -29,7 +29,6 @@ class Game {
             t_user.client = user.client;
             return;
         }
-        console.log('new user');
         this.users.push(user);
     }
 

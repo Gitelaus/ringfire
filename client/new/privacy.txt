@@ -1,0 +1,7 @@
+I, Nathan Joshua Dawson, the creator of Ring of Fire, promise that the data provided by Facebook integration not be used for malicious purposes. The Ring of Fire application,
+and it's server counter part, do not persist User information outside of the runtime environment (this may be subject to change with project development).
+The information used is used soley for the purposes of entertainment and is not shared to any 3rd party websites, albeit advertising on the page may 
+utilise data about the client but not outside of currently expected limits when integrating advertising. Your identity may appear to other users 
+on the condition that you share a mutual friend whom is currently online, and in no other cirumstance can two users with no connections appear to each other.
+
+The above conditions are subject to change with project development and specification changes.

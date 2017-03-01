@@ -89,6 +89,9 @@ function createCard(house, value, revealed) {
     return t_bitmap;
 }
 
+
+var posX, posY;
+
 function createDeck(deck) {
     var i = 0;
     var centerX = 0;
@@ -107,9 +110,19 @@ function createDeck(deck) {
             c_value: i_card.value
         });
 
-        card.on('click', function (event) {
-            sendPacket('card_reveal', { house: i_card.house, value: i_card.value });
+        card.on('mousedown', function (event) {
+            posX = event.stageX;
+            posY = event.stageY;            
         });
+
+        card.on('click', function(event){
+            var a = posX - event.stageX;
+            var b = posY - event.stageY;
+            var c = Math.sqrt( a*a + b*b );
+            if(c < 5){
+                sendPacket('card_reveal', { house: i_card.house, value: i_card.value });
+            }
+        })
 
         cardContainer.addChild(card);
         i++;

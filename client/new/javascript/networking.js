@@ -32,7 +32,7 @@ function getFacebookAppFriends(callback) {
 
 // SocketIO
 var hostname = window.location.hostname;
-var socket = io(hostname === "localhost" ? hostname : 'ringfire.herokuapp.com');
+var socket = io(hostname === "localhost" ? null : 'ringfire.herokuapp.com');
 
 function createGame() {
     var data = {

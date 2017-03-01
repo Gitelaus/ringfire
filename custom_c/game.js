@@ -1,3 +1,5 @@
+var shortid = require('shortid');
+
 var Settings = require('./settings.js');
 var User = require('./user.js');
 var Card = require('./card.js');

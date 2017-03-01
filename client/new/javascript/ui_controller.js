@@ -147,9 +147,15 @@ $(document).on('dragstart', 'img', function (event) {
 
 // Pull in TODO: Generalise
 
+$('.social_navigation').on('click', function() {
+    $('.social_navigation').animate({ 'right': -$(".social_navigation").width() - 4 }, 400);
+    $('.pull_menu').animate({ 'right': '0px' }, 400);
+    $('#social_round_bar').animate({ 'right': -$('#social_round_bar').width() });
+});
+
 var hammertime = new Hammer(document.getElementById('overlay'));
 hammertime.on('swipeleft', function () {
-    $('.social_navigation').animate({ 'right': -$(".social_navigation").width() - 2 }, 400);
+    $('.social_navigation').animate({ 'right': -$(".social_navigation").width() - 4 }, 400);
     $('.pull_menu').animate({ 'right': '0px' }, 400);
     $('#social_round_bar').animate({ 'right': -$('#social_round_bar').width() });
 });

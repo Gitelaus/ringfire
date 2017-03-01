@@ -10,7 +10,7 @@ var fs = require('fs');
 
 app.get('*', (req, res) => {
     var t_url = req.url.split("?")[0]
-    var f_path = __dirname + '/client' + (t_url == "/" ? "/index.html" : t_url);
+    var f_path = __dirname + '/client/new' + (t_url == "/" ? "/index.html" : t_url);
     fs.stat(f_path, (err, stat) => {
         if(err == null){
             res.sendFile(f_path);

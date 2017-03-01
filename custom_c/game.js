@@ -6,6 +6,8 @@ var Card = require('./card.js');
 
 class Game {
     constructor(){
+        this.id = shortid.generate();
+
         this.users = new Array();
         this.deck = new Array();
         this.generateDeck();

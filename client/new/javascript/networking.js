@@ -1,32 +1,31 @@
-
 var facebook_info = {
-    id:'',
-    name:''
-}
+    id: '',
+    name: ''
+};
 
 // Facebook
-function login(callback){
-    FB.login((response) => {
-        if(response.status === "connected"){
+function login(callback) {
+    FB.login(function (response) {
+        if (response.status === "connected") {
             facebook_info.id = response.authResponse.userID;
-            FB.api('/me', (apiResponse) => {
+            FB.api('/me', function (apiResponse) {
                 facebook_info.name = apiResponse.name;
                 callback(facebook_info);
             });
         }
-    }, {scope: 'user_friends'});
+    }, { scope: 'user_friends' });
 }
 
-function logout(callback){
-    FB.logout((response) => {
-        if(response.status != "connected"){
+function logout(callback) {
+    FB.logout(function (response) {
+        if (response.status != "connected") {
             callback(true);
         }
     });
 }
 
-function getFacebookAppFriends(callback){
-    FB.api('/me/friends/', function(response){
+function getFacebookAppFriends(callback) {
+    FB.api('/me/friends/', function (response) {
         callback(response.data);
     });
 }
@@ -35,78 +34,76 @@ function getFacebookAppFriends(callback){
 
 var socket = io('ringfire.herokuapp.com');
 
-function createGame(){
+function createGame() {
     var data = {
-        type:'create_game',
-        facebook:facebook_info
-    }
-    socket.emit('join_game', data);
-}
-
-function joinGame(targetUserID){
-    var data = {
-        type:'join_game',
-        facebook:facebook_info,
-        target_facebook_user:targetUserID
+        type: 'create_game',
+        facebook: facebook_info
     };
     socket.emit('join_game', data);
 }
 
-function refreshGamesList(){
-    getFacebookAppFriends((friends) => {
+function joinGame(targetUserID) {
+    var data = {
+        type: 'join_game',
+        facebook: facebook_info,
+        target_facebook_user: targetUserID
+    };
+    socket.emit('join_game', data);
+}
+
+function refreshGamesList() {
+    getFacebookAppFriends(function (friends) {
         socket.emit('facebook_check_games', friends);
     });
 }
 
-function sendPacket(name, packet){
+function sendPacket(name, packet) {
     socket.emit(name, packet);
 }
 
-function getUserImage(userID, callback){
-    FB.api('/' + userID + '/picture?height=80', (response) => {
+function getUserImage(userID, callback) {
+    FB.api('/' + userID + '/picture?height=80', function (response) {
         callback(response.data);
     });
 }
-
 
 // Incoming Message Handling
 
 // Game
 //  Users
 //  Deck
-socket.on('join_game', (data) => {
+socket.on('join_game', function (data) {
     toggleMenu();
     setupCanvas();
     console.log(data.deck[0].revealed);
     createDeck(data.deck);
-    data.users.forEach((user) => {
+    data.users.forEach(function (user) {
         addPlayer(user);
     });
     setActivePlayer(data.activeUser);
 });
 
-socket.on('new_client', (data)=>{
+socket.on('new_client', function (data) {
     addPlayer(data);
 });
 
-socket.on('disconnect_client', (data) => {
+socket.on('disconnect_client', function (data) {
     removePlayer(data);
 });
 
-socket.on('update_games_list', (games) => {
-    games.forEach((i_game) => {
+socket.on('update_games_list', function (games) {
+    games.forEach(function (i_game) {
         addGameListing(i_game);
     });
-    if(games.length < 1){
+    if (games.length < 1) {
         addGameListing(null);
     }
 });
 
-socket.on('card_reveal', (data) => {
+socket.on('card_reveal', function (data) {
     revealCard(data.house, data.value);
-    var str = "images/cards/card" + (data.house + data.value) + ".png"
-    showMessageAnnoucement(str, data.rule, () =>{
+    var str = "images/cards/card" + (data.house + data.value) + ".png";
+    showMessageAnnoucement(str, data.rule, function () {
         setActivePlayer(data.activeUser);
     });
 });
-

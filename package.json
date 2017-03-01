@@ -10,6 +10,7 @@
   "author": "Nathan Joshua Dawson",
   "license": "ISC",
   "devDependencies": {
+    "babel-cli": "^6.23.0",
     "gulp": "^3.9.1"
   }
 }

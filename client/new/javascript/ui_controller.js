@@ -4,7 +4,7 @@
 var ad = new Audio("resources/if_playing_the_piano_makes_me_a_pianist_does_playing_an_electric_one_make_me_a_vibrator.mp3");
 ad.loop = true;
 
-var avatar_img_str = 'https://ringfire.herokyapp.com/avatar/?name=%r%&gender=male';
+var avatar_img_str = 'https://ringfire.herokuapp.com/avatar/?name=%r%&gender=male';
 var fb_image_str = 'http://graph.facebook.com/%r%/picture?height=64&width=64';
 
 function toggleMenu(id) {

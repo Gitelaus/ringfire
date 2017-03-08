@@ -4,6 +4,9 @@
 var ad = new Audio("resources/if_playing_the_piano_makes_me_a_pianist_does_playing_an_electric_one_make_me_a_vibrator.mp3");
 ad.loop = true;
 
+var avatar_img_str = 'https://ringfire.herokyapp.com/avatar/?name=%r%&gender=male';
+var fb_image_str = 'http://graph.facebook.com/%r%/picture?height=64&width=64';
+
 function toggleMenu(id) {
     var menuCount = $('.menu:not(#' + id + ')').length;
     $('.menu:not(#' + id + ')').animate({ 'opacity': '0' }, 1000, function () {
@@ -20,7 +23,7 @@ $('#facebook_button').on('click', function (event) {
         if (facebook_info) {
             toggleMenu('join_game');
             $('.social_navigation').animate({ 'opacity': '1' }, 1000);
-            $('.facebook_image').attr('src', 'http://graph.facebook.com/' + facebook_info.id + '/picture?height=64&width=64');
+            $('.facebook_image').attr('src', fb_image_str.replace('%r%', facebook_info.id));
             $('.facebook_name').text(facebook_info.name);
             refreshGamesList();
         }
@@ -46,7 +49,7 @@ $('#guest_button').on('click', function(){
         $('#refresh_game_button').hide();
         toggleMenu('join_game');
         $('.social_navigation').animate({ 'opacity': '1' }, 1000);
-        $('.facebook_image').attr('src', 'http://localhost:3000/avatar/?name=' + name + '&gender=male');
+        $('.facebook_image').attr('src', avatar_img_str.replace('%r%', name));
         $('.facebook_name').text(name);
 })
 
@@ -54,7 +57,7 @@ $('#guest_name').on('input', function(){
     typewatch(function(){
         var name = $('#guest_name').val();
         $('#guest_button').text('Login as "' + name + '" [Guest]');
-        $('#guest_image').attr('src', 'http://localhost:3000/avatar/?name=' + name + '&gender=male');
+        $('#guest_image').attr('src', avatar_img_str.replace('%r%', name));
     }, 200);
 });
 
@@ -110,7 +113,7 @@ function addGameListing(game) {
     });
     game.users.forEach(function (user) {
          var f_img = !user.id.startsWith("G-") ? 
-            'http://graph.facebook.com/' + user.id + '/picture?height=64&width=64' : 'http://localhost:3000/avatar/?name=' + user.name + '&gender=male';
+            fb_image_str.replace('%r%', user.id) : avatar_img_str.replace('%r%', user.name);
         game_listing.append($("<img>", {
             src: f_img
         }));
@@ -120,7 +123,7 @@ function addGameListing(game) {
 
 function addPlayer(f_user) {
     var f_img = !f_user.id.startsWith("G-") ? 
-        'http://graph.facebook.com/' + f_user.id + '/picture?height=64&width=64' : 'http://localhost:3000/avatar/?name=' + f_user.name + '&gender=male';
+            fb_image_str.replace('%r%', f_user.id) : avatar_img_str.replace('%r%', f_user.name);
     var t_container = $("<div/>", {
         class: 'player_container'
     });

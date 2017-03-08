@@ -85,7 +85,7 @@ socket.on('join_game', function (data) {
     setupCanvas();
     createDeck(data.deck);
     console.log(data);
-    $('#game_id').text('GameID: ' + data.gameid);
+    $('#game_id').html('GameID: <br />' + data.gameid);
     data.users.forEach(function (user) {
         addPlayer(user);
     });

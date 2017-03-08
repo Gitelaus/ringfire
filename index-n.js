@@ -5,12 +5,20 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var randomstring = require("randomstring");
-
+var md5 = require('md5');
 var fs = require('fs');
 
 app.get('*', (req, res) => {
     var t_url = req.url.split("?")[0]
     var f_path = __dirname + '/client/new' + (t_url == "/" ? "/index.html" : t_url);
+    if (req.url.toLowerCase().startsWith("/avatar/")){
+        var url_vars = req.url.split("?")[1] || "";
+        var url_var_list = getJsonFromUrl(url_vars);
+        avatar(md5(url_var_list.name || randomstring.generate()), (url_var_list.gender || Math.random() <= 0.5 ? "male" : "female"), 64)
+            .stream()
+            .pipe(res);
+        return;    
+    }
     fs.stat(f_path, (err, stat) => {
         if(err == null){
             res.sendFile(f_path);
@@ -20,6 +28,16 @@ app.get('*', (req, res) => {
         }
     });
 });
+
+function getJsonFromUrl(url) {
+  var query = url;
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
 
 http.listen(process.env.PORT || 3000, () => {
     console.log('== Started == ');
@@ -43,7 +61,9 @@ io.on('connection', (client) => {
     //  [OPTIONAL]
     //      target_facebook_user    //  ONLY EXISTS WITHIN join game TYPE
     client.on('join_game', (data) => {
-        var t_user = new User(client, data.facebook.id, data.facebook.name);
+        var t_name = data.facebook.name || data.client.name;
+        var t_id = data.facebook.id || "G-" + md5(t_name) 
+        var t_user = new User(client, t_id, t_name);
         var t_game;
         switch(data.type){
             case "join_game":
@@ -54,10 +74,10 @@ io.on('connection', (client) => {
                 game_master_list.push(t_game);
                 break;
         }
-        sendGamePacket(t_game, 'new_client', {name:t_user.name,id:t_user.id}); 
+        sendGamePacket(t_game, 'new_client', new NetworkUser(t_user)); 
         t_game.addUser(t_user);
         var d = t_game.users.map(x => new NetworkUser(x));
-        client.emit('join_game', {users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
+        client.emit('join_game', {gameid:t_game.id, users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
     });
 
     // Facebook Check Games
@@ -102,7 +122,39 @@ io.on('connection', (client) => {
             sendGamePacket(t_game, 'disconnect_client', n_user);
         }
     });
+
+    client.on('avatar_request', (data) => {
+        var username = data.username;
+        getAvatar(username, () => {
+        });
+    });
+
+    client.on('game_id_search', (data) => {
+        var t_game = findGameByValue('id', data.toLowerCase());
+        if(t_game){
+            var games = new Array();
+            games.push(new NetworkGame(t_game));
+            client.emit('update_games_list', games)
+        }
+    });
 });
+
+
+// Avatar Request Handler
+
+var avatar = require('avatar-generator')({
+    //Optional settings. Default settings in 'settings.js' 
+    order:'background face clothes head hair eye mouth'.split(' '), //order in which sprites should be combined 
+    images:require('path').join(__dirname,'./img'), // path to sprites 
+    convert:'convert' //Path to imagemagick convert 
+});
+
+function getAvatar(name, callback){
+        avatar(name, 'male', 128)
+            .toBuffer(function (err,buffer){
+                callback(buffer.toString('base64'));
+            });
+}
 
 function sendGamePacket(game, message, data){
     game.users.forEach((user) => {
@@ -125,4 +177,10 @@ function findGameByClient(client){
     return game_master_list.find(
                             i_game => i_game.users.find(
                                 i_user => i_user.client == client));
+}
+
+function findGameByValue(value, matchValue){
+    return game_master_list.find(
+        i_game => i_game[value] == matchValue
+    );
 }

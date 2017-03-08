@@ -3,6 +3,10 @@ var facebook_info = {
     name: ''
 };
 
+var client_info = {
+    name:''
+}
+
 // Facebook
 function login(callback) {
     FB.login(function (response) {
@@ -30,6 +34,7 @@ function getFacebookAppFriends(callback) {
     });
 }
 
+
 // SocketIO
 var hostname = window.location.hostname;
 var socket = io(hostname === "localhost" ? null : 'ringfire.herokuapp.com');
@@ -37,16 +42,19 @@ var socket = io(hostname === "localhost" ? null : 'ringfire.herokuapp.com');
 function createGame() {
     var data = {
         type: 'create_game',
-        facebook: facebook_info
+        facebook: facebook_info,
+        client: client_info
     };
     socket.emit('join_game', data);
 }
 
-function joinGame(targetUserID) {
+function joinGame(targetUserID, targetGameID) {
     var data = {
         type: 'join_game',
         facebook: facebook_info,
-        target_facebook_user: targetUserID
+        client: client_info,
+        target_facebook_user: targetUserID,
+        target_game:targetGameID
     };
     socket.emit('join_game', data);
 }
@@ -76,6 +84,8 @@ socket.on('join_game', function (data) {
     toggleMenu();
     setupCanvas();
     createDeck(data.deck);
+    console.log(data);
+    $('#game_id').text('GameID: ' + data.gameid);
     data.users.forEach(function (user) {
         addPlayer(user);
     });
@@ -91,6 +101,7 @@ socket.on('disconnect_client', function (data) {
 });
 
 socket.on('update_games_list', function (games) {
+    console.log(games);
     games.forEach(function (i_game) {
         addGameListing(i_game);
     });

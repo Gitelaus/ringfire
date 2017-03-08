@@ -18,6 +18,7 @@
                 <span>It is your go!</span>
             </div>
             <div class="pull_menu">
+                <span id="game_id">Hello</span>
             </div>
             <div class="social_navigation">
                 <img class="facebook_image"/>
@@ -29,22 +30,21 @@
             </div>
             
             <div class="menu" id="facebook_login">
-                <span class="title">Facebook Login</span>
-                <p>
-                    We require you to have a Facebook account to play this game. We don't collect any
-                    information about you - I'm not smart enough to do that.
-                </p>
-                <span class="status_message pulsate">Please wait, connecting to Facebook</span>
                 <button id="facebook_button">Login with Facebook</button>
+                <span>or</span>
+                <input type="text" placeholder="Name" id="guest_name" />     
+                <button id="guest_button">Login as "" [Guest]</button>
+                <img src="/avatar/" id="guest_image" width="64px" height="64px" style="margin:auto;border:2px white solid;" />
             </div>
             <div class="menu" id="join_game"  style="display:none">
                 <span class="title">Join Game</span>
+                <input maxlength="4" type="text" placeholder="gameid" id="game_id_search" style="text-align:center;font-size:24px;" />
                 <div id="game_list">
                 </div>
                 <div class="tab_container">
                     <button id="refresh_game_button">Refresh</button>
                     <button id="create_game_button">Create</button>
-                </div>
+                 </div>
             </div>
         </div>
         <script>

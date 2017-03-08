@@ -5,3 +5,11 @@ utilise data about the client but not outside of currently expected limits when 
 on the condition that you share a mutual friend whom is currently online, and in no other cirumstance can two users with no connections appear to each other.
 
 The above conditions are subject to change with project development and specification changes.
+
+
+2/3 ounce = 18.6g
+50 out of 155 as a percentage = 32.3%
+65 out of 155 as a percentage = 42%
+40 out of 155 as a percentage = 26%;
+
+

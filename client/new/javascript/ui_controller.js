@@ -20,7 +20,7 @@ $('#facebook_button').on('click', function (event) {
         if (facebook_info) {
             toggleMenu('join_game');
             $('.social_navigation').animate({ 'opacity': '1' }, 1000);
-            $('.facebook_image').attr('src', 'http://graph.facebook.com/' + facebook_info.id + '/picture?height=128&width=128');
+            $('.facebook_image').attr('src', 'http://graph.facebook.com/' + facebook_info.id + '/picture?height=64&width=64');
             $('.facebook_name').text(facebook_info.name);
             refreshGamesList();
         }
@@ -36,6 +36,44 @@ $('#facebook_logout').on('click', function (event) {
     });
 });
 
+
+$('#guest_button').on('click', function(){
+        var name = $('#guest_name').val();
+        if(name === ""){
+            return;
+        }
+        client_info.name = name;
+        $('#refresh_game_button').hide();
+        toggleMenu('join_game');
+        $('.social_navigation').animate({ 'opacity': '1' }, 1000);
+        $('.facebook_image').attr('src', 'http://localhost:3000/avatar/?name=' + name + '&gender=male');
+        $('.facebook_name').text(name);
+})
+
+$('#guest_name').on('input', function(){
+    typewatch(function(){
+        var name = $('#guest_name').val();
+        $('#guest_button').text('Login as "' + name + '" [Guest]');
+        $('#guest_image').attr('src', 'http://localhost:3000/avatar/?name=' + name + '&gender=male');
+    }, 200);
+});
+
+$('#game_id_search').on('input', function(){
+    typewatch(function(){
+        socket.emit('game_id_search', $('#game_id_search').val());
+    }, 200);
+})
+
+
+var typewatch = function(){
+    var timer = 0;
+    return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+    }  
+}();    
+
+
 $(window).on('resize', function () {
     $('#overlay').css({ width: window.width, height: window.height });
 });
@@ -50,6 +88,7 @@ $('#refresh_game_button').on('click', function () {
     $('#game_list').html('');
     refreshGamesList();
 });
+
 
 function addGameListing(game) {
     if (game == null) {
@@ -70,20 +109,24 @@ function addGameListing(game) {
         joinGame(game.users[0].id);
     });
     game.users.forEach(function (user) {
+         var f_img = !user.id.startsWith("G-") ? 
+            'http://graph.facebook.com/' + user.id + '/picture?height=64&width=64' : 'http://localhost:3000/avatar/?name=' + user.name + '&gender=male';
         game_listing.append($("<img>", {
-            src: 'http://graph.facebook.com/' + user.id + '/picture?height=128&width=128'
+            src: f_img
         }));
     });
     $('#game_list').append(game_listing);
 }
 
 function addPlayer(f_user) {
+    var f_img = !f_user.id.startsWith("G-") ? 
+        'http://graph.facebook.com/' + f_user.id + '/picture?height=64&width=64' : 'http://localhost:3000/avatar/?name=' + f_user.name + '&gender=male';
     var t_container = $("<div/>", {
         class: 'player_container'
     });
     var t_img = $('<img/>', {
         class: 'facebook_image',
-        src: 'http://graph.facebook.com/' + f_user.id + '/picture?height=128&width=128'
+        src: f_img
     });
     var t_span = $("<span/>", {
         text: f_user.name
@@ -91,9 +134,9 @@ function addPlayer(f_user) {
 
     t_container.append(t_img).append(t_span);
     $('.pull_menu').append(t_container);
-    if (f_user.id == facebook_info.id) return;
+    if (f_user.id === facebook_info.id || f_user.name === client_info.name) return;
     $('#social_round_bar').append($('<img/>', {
-        src: 'http://graph.facebook.com/' + f_user.id + '/picture?height=50&width=50'
+        src: f_img
     }));
 }
 

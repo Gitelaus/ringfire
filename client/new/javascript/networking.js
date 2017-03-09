@@ -4,7 +4,8 @@ var facebook_info = {
 };
 
 var client_info = {
-    name:''
+    name:'',
+    gender:'male'
 }
 
 // Facebook

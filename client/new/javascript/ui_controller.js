@@ -4,7 +4,12 @@
 var ad = new Audio("resources/if_playing_the_piano_makes_me_a_pianist_does_playing_an_electric_one_make_me_a_vibrator.mp3");
 ad.loop = true;
 
-var avatar_img_str = 'https://ringfire.herokuapp.com/avatar/?name=%r%&gender=male';
+var avatar_img_str = '/avatar/?name=%n%&gender=%g%';
+function getAvatarImage(name, gender){
+    gender = gender || "male";
+    return avatar_img_str.replace('%n%', name).replace('%g%', gender);
+}
+
 var fb_image_str = 'http://graph.facebook.com/%r%/picture?height=64&width=64';
 
 function toggleMenu(id) {
@@ -49,7 +54,7 @@ $('#guest_button').on('click', function(){
         $('#refresh_game_button').hide();
         toggleMenu('join_game');
         $('.social_navigation').animate({ 'opacity': '1' }, 1000);
-        $('.facebook_image').attr('src', avatar_img_str.replace('%r%', name));
+        $('.facebook_image').attr('src', getAvatarImage(name));
         $('.facebook_name').text(name);
 })
 
@@ -57,7 +62,8 @@ $('#guest_name').on('input', function(){
     typewatch(function(){
         var name = $('#guest_name').val();
         $('#guest_button').text('Login as "' + name + '" [Guest]');
-        $('#guest_image').attr('src', avatar_img_str.replace('%r%', name));
+        $('#guest_image_male').attr('src', getAvatarImage(name, 'male'));
+        $('#guest_image_female').attr('src', getAvatarImage(name, 'female'));
     }, 200);
 });
 
@@ -113,7 +119,7 @@ function addGameListing(game) {
     });
     game.users.forEach(function (user) {
          var f_img = !user.id.startsWith("G-") ? 
-            fb_image_str.replace('%r%', user.id) : avatar_img_str.replace('%r%', user.name);
+            fb_image_str.replace('%r%', user.id) : getAvatarImage(user.name);
         game_listing.append($("<img>", {
             src: f_img
         }));
@@ -123,7 +129,7 @@ function addGameListing(game) {
 
 function addPlayer(f_user) {
     var f_img = !f_user.id.startsWith("G-") ? 
-            fb_image_str.replace('%r%', f_user.id) : avatar_img_str.replace('%r%', f_user.name);
+            fb_image_str.replace('%r%', f_user.id) : getAvatarImage(f_user.name);
     var t_container = $("<div/>", {
         class: 'player_container'
     });

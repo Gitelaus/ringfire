@@ -14,7 +14,9 @@ app.get('*', (req, res) => {
     if (req.url.toLowerCase().startsWith("/avatar/")){
         var url_vars = req.url.split("?")[1] || "";
         var url_var_list = getJsonFromUrl(url_vars);
-        avatar(md5(url_var_list.name || randomstring.generate()), (url_var_list.gender || Math.random() <= 0.5 ? "male" : "female"), 64)
+        var t_n = url_var_list.name || randomstring.generate();
+        var t_g = url_var_list.gender ? url_var_list.gender : (Math.random() >= 0.5 ? "male" : "female");
+        avatar(md5(t_n), t_g, 64)
             .stream()
             .pipe(res);
         return;    
@@ -63,7 +65,7 @@ io.on('connection', (client) => {
     client.on('join_game', (data) => {
         var t_name = data.facebook.name || data.client.name;
         var t_id = data.facebook.id || "G-" + md5(t_name) 
-        var t_user = new User(client, t_id, t_name);
+        var t_user = new User(client, t_id, t_name, data.client.gender);
         var t_game;
         switch(data.type){
             case "join_game":

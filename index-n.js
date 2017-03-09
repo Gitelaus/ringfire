@@ -91,6 +91,7 @@ io.on('connection', (client) => {
     //  }        
     client.on('facebook_check_games', (data)=>{
         var friendGames = new Array();
+        if(!data)return;
         data.forEach((friend) => {
             var t_game = findGameByUser(friend.id);
             if(t_game){

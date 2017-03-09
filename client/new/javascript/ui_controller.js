@@ -231,6 +231,12 @@ $('.social_navigation').on('click', function() {
     $('#social_round_bar').animate({ 'right': -$('#social_round_bar').width() });
 });
 
+$('.pull_menu').on('click', function() {
+    $('.pull_menu').animate({ 'right': -$('.pull_menu').width() - 4}, 400);
+    $('.social_navigation').animate({ 'right': '0px' }, 400);
+    $('#social_round_bar').animate({ 'right': '0px' });
+});
+
 var hammertime = new Hammer(document.getElementById('overlay'));
 hammertime.on('swipeleft', function () {
     $('.social_navigation').animate({ 'right': -$(".social_navigation").width() - 4 }, 400);
@@ -239,7 +245,7 @@ hammertime.on('swipeleft', function () {
 });
 
 hammertime.on('swiperight', function () {
-    $('.pull_menu').animate({ 'right': -$('.pull_menu').width() }, 400);
+    $('.pull_menu').animate({ 'right': -$('.pull_menu').width() - 4}, 400);
     $('.social_navigation').animate({ 'right': '0px' }, 400);
     $('#social_round_bar').animate({ 'right': '0px' });
 });

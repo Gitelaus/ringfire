@@ -16,7 +16,7 @@ app.get('*', (req, res) => {
         var url_var_list = getJsonFromUrl(url_vars);
         var t_n = url_var_list.name || randomstring.generate();
         var t_g = url_var_list.gender ? url_var_list.gender : (Math.random() >= 0.5 ? "male" : "female");
-        res.type("image/png")
+        res.type("image/png");
         avatar(t_n, t_g, 64)
             .stream()
             .pipe(res);
@@ -145,12 +145,7 @@ io.on('connection', (client) => {
 
 // Avatar Request Handler
 
-var avatar = require('avatar-generator')({
-    //Optional settings. Default settings in 'settings.js' 
-    order:'background face clothes head hair eye mouth'.split(' '), //order in which sprites should be combined 
-    images:require('path').join(__dirname,'./img'), // path to sprites 
-    convert:'convert' //Path to imagemagick convert 
-});
+var avatar = require('avatar-generator')();
 
 function getAvatar(name, callback){
         avatar(name, 'male', 128)

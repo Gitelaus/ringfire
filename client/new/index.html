@@ -34,10 +34,18 @@
                 <span>or</span>
                 <input type="text" placeholder="Name" id="guest_name" />
                 <div class="tab_container" style="margin-top:5px;">
-                    <img src="/avatar/?name=default&gender=male" id="guest_image_male" width="64px" height="64px" style="margin:auto;border:2px white solid;" />
-                    <img src="/avatar/?name=default&gender=female" id="guest_image_female" width="64px" height="64px" style="margin:auto;border:2px white solid;" />
+                    <div style="margin:auto;text-align:center;">
+                        <h1>Male</h1>
+                        <br/>
+                        <img onclick="switchButtonGender('male');" src="/avatar/?name=default&gender=male" id="guest_image_male" width="64px" height="64px" style="border:2px green solid;" />
+                    </div>
+                    <div style="margin:auto;text-align:center;">
+                        <h1>Female</h1>
+                        <br/>
+                        <img onclick="switchButtonGender('female');" src="/avatar/?name=default&gender=female" id="guest_image_female" width="64px" height="64px" style="border:2px white solid;" />
+                    </div>
                 </div>
-                <button id="guest_button">Login as "" [Guest]</button>
+                <button id="guest_button" data-type="male">Login as "" [Guest Male]</button>
             </div>
             <div class="menu" id="join_game"  style="display:none">
                 <span class="title">Join Game</span>

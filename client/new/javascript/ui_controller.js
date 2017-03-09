@@ -4,7 +4,7 @@
 var ad = new Audio("resources/if_playing_the_piano_makes_me_a_pianist_does_playing_an_electric_one_make_me_a_vibrator.mp3");
 ad.loop = true;
 
-var avatar_img_str = '/avatar/?name=%n%&gender=%g%';
+var avatar_img_str = 'https://ringfire.herokuapp.com/avatar/?name=%n%&gender=%g%';
 function getAvatarImage(name, gender){
     gender = gender || "male";
     return avatar_img_str.replace('%n%', name).replace('%g%', gender);
@@ -54,14 +54,18 @@ $('#guest_button').on('click', function(){
         $('#refresh_game_button').hide();
         toggleMenu('join_game');
         $('.social_navigation').animate({ 'opacity': '1' }, 1000);
-        $('.facebook_image').attr('src', getAvatarImage(name));
+        $('.facebook_image').attr('src', getAvatarImage(name, client_info.gender));
         $('.facebook_name').text(name);
 })
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 $('#guest_name').on('input', function(){
     typewatch(function(){
         var name = $('#guest_name').val();
-        $('#guest_button').text('Login as "' + name + '" [Guest]');
+        $('#guest_button').text('Login as "' + name + '" [Guest ' + $('#guest_button').attr('data-type').capitalize() + ']');
         $('#guest_image_male').attr('src', getAvatarImage(name, 'male'));
         $('#guest_image_female').attr('src', getAvatarImage(name, 'female'));
     }, 200);
@@ -69,9 +73,26 @@ $('#guest_name').on('input', function(){
 
 $('#game_id_search').on('input', function(){
     typewatch(function(){
+        $('#game_list').html('');
         socket.emit('game_id_search', $('#game_id_search').val());
     }, 200);
 })
+
+function switchButtonGender(t_type){
+    var t_text = $('#guest_button').text();
+    if(t_type === "female"){
+        $('#guest_button').text(t_text.replace('Male]', 'Female]'));
+        $('#guest_button').attr('data-type', 'female');
+        $('#guest_image_female').css('border', '2px solid green');
+        $('#guest_image_male').css('border', '2px solid white');
+    }else{
+        $('#guest_button').text(t_text.replace('Female]', 'Male]'));
+        $('#guest_button').attr('data-type', 'male');
+        $('#guest_image_female').css('border', '2px solid white');
+        $('#guest_image_male').css('border', '2px solid green');
+    }
+    client_info.gender = t_type;
+}
 
 
 var typewatch = function(){
@@ -119,7 +140,7 @@ function addGameListing(game) {
     });
     game.users.forEach(function (user) {
          var f_img = !user.id.startsWith("G-") ? 
-            fb_image_str.replace('%r%', user.id) : getAvatarImage(user.name);
+            fb_image_str.replace('%r%', user.id) : getAvatarImage(user.name, user.gender);
         game_listing.append($("<img>", {
             src: f_img
         }));
@@ -129,7 +150,7 @@ function addGameListing(game) {
 
 function addPlayer(f_user) {
     var f_img = !f_user.id.startsWith("G-") ? 
-            fb_image_str.replace('%r%', f_user.id) : getAvatarImage(f_user.name);
+            fb_image_str.replace('%r%', f_user.id) : getAvatarImage(f_user.name, f_user.gender);
     var t_container = $("<div/>", {
         class: 'player_container'
     });

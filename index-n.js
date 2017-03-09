@@ -16,7 +16,7 @@ app.get('*', (req, res) => {
         var url_var_list = getJsonFromUrl(url_vars);
         var t_n = url_var_list.name || randomstring.generate();
         var t_g = url_var_list.gender ? url_var_list.gender : (Math.random() >= 0.5 ? "male" : "female");
-        avatar(md5(t_n), t_g, 64)
+        avatar(t_n, t_g, 64)
             .stream()
             .pipe(res);
         return;    
@@ -79,7 +79,7 @@ io.on('connection', (client) => {
         sendGamePacket(t_game, 'new_client', new NetworkUser(t_user)); 
         t_game.addUser(t_user);
         var d = t_game.users.map(x => new NetworkUser(x));
-        client.emit('join_game', {gameid:t_game.id, users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
+        client.emit('join_game', {id:t_user.id, gameid:t_game.id, users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
     });
 
     // Facebook Check Games

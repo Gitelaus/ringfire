@@ -82,10 +82,10 @@ function getUserImage(userID, callback) {
 //  Users
 //  Deck
 socket.on('join_game', function (data) {
+    facebook_info.id = data.id;
     toggleMenu();
     setupCanvas();
     createDeck(data.deck);
-    console.log(data);
     $('#game_id').html('GameID: <br />' + data.gameid);
     data.users.forEach(function (user) {
         addPlayer(user);

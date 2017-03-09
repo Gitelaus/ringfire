@@ -152,21 +152,25 @@ function addPlayer(f_user) {
     var f_img = !f_user.id.startsWith("G-") ? 
             fb_image_str.replace('%r%', f_user.id) : getAvatarImage(f_user.name, f_user.gender);
     var t_container = $("<div/>", {
-        class: 'player_container'
+        class: 'player_container',
+        'data-player-id':f_user.id
     });
     var t_img = $('<img/>', {
         class: 'facebook_image',
-        src: f_img
+        src: f_img,
+        'data-player-id':f_user.id
     });
     var t_span = $("<span/>", {
-        text: f_user.name
+        text: f_user.name,
+        'data-player-id':f_user.id
     });
 
     t_container.append(t_img).append(t_span);
     $('.pull_menu').append(t_container);
     if (f_user.id === facebook_info.id || f_user.name === client_info.name) return;
     $('#social_round_bar').append($('<img/>', {
-        src: f_img
+        src: f_img,
+        'data-player-id':f_user.id
     }));
 }
 
@@ -176,8 +180,9 @@ function removePlayer(f_user) {
 }
 
 function setActivePlayer(f_user) {
-    $('span:not(:contains(' + f_user.name + '))').parent().css('background', 'rgba(0,0,0,0.5)');
-    $('span:contains(' + f_user.name + ')').parent().css('background', 'rgba(0,200,0,0.5)');
+    console.log(f_user);
+    $('.player_container[data-player-id=' + f_user.id + ']').css('background', 'rgba(0,200,0,0.5)');
+    $('.player_container:not([data-player-id=' + f_user.id + '])').css('background', 'rgba(0,0,0,0.5)');
     if (f_user.id == facebook_info.id) {
         $('.social_navigation').css('border', '2px solid green');
         $('.social_navigation').addClass("img_pulse");
@@ -192,7 +197,7 @@ function setActivePlayer(f_user) {
         $('.social_navigation').css('border', '2px solid black');
     }
     $('#social_round_bar>img').css('border', '2px solid black');
-    var t_img = $('#social_round_bar>img[src*=' + f_user.id + ']');
+    var t_img = $('img[data-player-id=' + f_user.id + ']');
     t_img.css('border', '2px solid green');
     t_img.addClass("img_pulse");
     t_img.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function (e) {

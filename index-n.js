@@ -16,6 +16,7 @@ app.get('*', (req, res) => {
         var url_var_list = getJsonFromUrl(url_vars);
         var t_n = url_var_list.name || randomstring.generate();
         var t_g = url_var_list.gender ? url_var_list.gender : (Math.random() >= 0.5 ? "male" : "female");
+        res.type("image/png")
         avatar(t_n, t_g, 64)
             .stream()
             .pipe(res);

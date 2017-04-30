@@ -105,8 +105,8 @@ io.on('connection', (client) => {
     client.on('card_reveal', (data) => {
         var t_game = findGameByClient(client);
         var t_user = findUserByValue(t_game, 'client', client)
-        print(t_game)
-        if(t_game.getActiveUser() !== t_user){
+        
+        if(t_game && t_game.getActiveUser() !== t_user){
             return;
         }
         t_game.deck.find(x => x.house == data.house && x.value == data.value).revealed = true;

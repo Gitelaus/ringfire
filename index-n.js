@@ -20,7 +20,7 @@ app.get('*', (req, res) => {
         avatar(t_n, t_g, 64)
             .stream()
             .pipe(res);
-        return;    
+        return;
     }
     fs.stat(f_path, (err, stat) => {
         if(err == null){
@@ -65,7 +65,7 @@ io.on('connection', (client) => {
     //      target_facebook_user    //  ONLY EXISTS WITHIN join game TYPE
     client.on('join_game', (data) => {
         var t_name = data.facebook.name || data.client.name;
-        var t_id = data.facebook.id || "G-" + md5(t_name) 
+        var t_id = data.facebook.id || "G-" + md5(t_name)
         var t_user = new User(client, t_id, t_name, data.client.gender);
         var t_game;
         switch(data.type){
@@ -77,7 +77,7 @@ io.on('connection', (client) => {
                 game_master_list.push(t_game);
                 break;
         }
-        sendGamePacket(t_game, 'new_client', new NetworkUser(t_user)); 
+        sendGamePacket(t_game, 'new_client', new NetworkUser(t_user));
         t_game.addUser(t_user);
         var d = t_game.users.map(x => new NetworkUser(x));
         client.emit('join_game', {id:t_user.id, gameid:t_game.id, users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
@@ -88,7 +88,7 @@ io.on('connection', (client) => {
     //  friend{
     //      id,
     //      name
-    //  }        
+    //  }
     client.on('facebook_check_games', (data)=>{
         var friendGames = new Array();
         if(!data)return;
@@ -105,12 +105,13 @@ io.on('connection', (client) => {
     client.on('card_reveal', (data) => {
         var t_game = findGameByClient(client);
         var t_user = findUserByValue(t_game, 'client', client)
+        print(t_game)
         if(t_game.getActiveUser() !== t_user){
-            return;    
+            return;
         }
         t_game.deck.find(x => x.house == data.house && x.value == data.value).revealed = true;
         data.rule = Settings.default_rules.find(x => x.value == data.value).rule;
-        t_game.advanceRound(); 
+        t_game.advanceRound();
         data.activeUser = new NetworkUser(t_game.getActiveUser());
         sendGamePacket(t_game,'card_reveal',data);
     });
@@ -121,7 +122,7 @@ io.on('connection', (client) => {
         if(t_game && t_user){
             var n_user = new NetworkUser(t_user);
             if(t_game.removeUser(t_user)){
-                game_master_list = game_master_list.filter(g => g !== t_game);    
+                game_master_list = game_master_list.filter(g => g !== t_game);
             }
             sendGamePacket(t_game, 'disconnect_client', n_user);
         }

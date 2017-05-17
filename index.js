@@ -1,39 +1,27 @@
 // Initalization
 var app = require('express')();
+
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var randomstring = require("randomstring");
-
+var md5 = require('md5');
 var fs = require('fs');
-
-//
-var games = [];
-//
-
-// Card Information
-var HOUSES = ["Spades", "Hearts", "Diamonds", "Clubs"];
-var VALUES = ["K", "Q", "J", "A", "10", "9", "8", "7", "6", "5","4", "3", "2"];
-var default_rules = [
-    {value:"K", rule:"Pour some of your drink into the king cup, if you get the forth, you down it"},
-    {value:"Q", rule:"You're the question master, anyone who answers your questions must drink"},
-    {value:"J", rule:"Create your own rule"},
-    {value:"A", rule:"Waterfall, drink till the person to the right of you stops drinking, or carry on."},
-    {value:"10", rule:"Categories - Pick a subject, name a thing in that subject/context. Person who can't drinks."},
-    {value:"9", rule:"Rhyme with words, pick a word and the person who can't think of a rhyme drinks"},
-    {value:"8", rule:"You get the ability to pick a mate, and when you drink, they drink"},
-    {value:"7", rule:"Heaven Master - When you put up your hand, the last person to follow must drink"},
-    {value:"6", rule:"Six is Dicks. Guys drink"},
-    {value:"5", rule:"5 is never have I ever. Name something and everyone who's done that must drink"},
-    {value:"4", rule:"Four is whores. Girls drink"},
-    {value:"3", rule:"Three is me. You must drink"},
-    {value:"2", rule:"Two is you. You get to pick a player to drink"},
-]
-//
 
 app.get('*', (req, res) => {
     var t_url = req.url.split("?")[0]
-    var f_path = __dirname + '/client' + (t_url == "/" ? "/index.html" : t_url);
+    var f_path = __dirname + '/client/new' + (t_url == "/" ? "/index.html" : t_url);
+    if (req.url.toLowerCase().startsWith("/avatar/")){
+        var url_vars = req.url.split("?")[1] || "";
+        var url_var_list = getJsonFromUrl(url_vars);
+        var t_n = url_var_list.name || randomstring.generate();
+        var t_g = url_var_list.gender ? url_var_list.gender : (Math.random() >= 0.5 ? "male" : "female");
+        res.type("image/png");
+        avatar(t_n, t_g, 64)
+            .stream()
+            .pipe(res);
+        return;
+    }
     fs.stat(f_path, (err, stat) => {
         if(err == null){
             res.sendFile(f_path);
@@ -44,146 +32,159 @@ app.get('*', (req, res) => {
     });
 });
 
-var users = new Array();
-var games = new Array();
-var reconnects = 0;
-io.on('connection', (client) => {
-    client.emit('rule_update', default_rules);
-    client.on('join_game', (data) => {
-        var g;
-        if(data.gameid == "-c"){
-            g = new Game(randomstring.generate(4).toUpperCase(), client, data.rules);
-            games.push(g);
-        }else{
-            g = games.find(x => x.token == data.gameid.toUpperCase());
-        }
-        if(!g)return;
-        var namelist = [];
-        g.users.forEach((user) => {
-            user.client.emit('join_game', {name:data.name, facebook_id:data.facebook_id});
-            namelist.push(user.name);
-        });
-        g.addUser(new User(data.name, client, data.facebook_id));
-        client.emit('join_game', {name:data.name,token:g.token, deck:g.deck, users:namelist, rules:g.rules, facebook_id:data.facebook_id});
-    });
-
-    client.on('rotation_update', (data) => {
-       var g = games.find(g => (g.users.find(u => u.client == client)) != null);
-       if(!g){
-           return;
-       }
-       if(g.getActiveUser().client != client)return;
-       g.users.forEach((user)=>{
-           user.client.emit('rotation_update', data);
-       });
-    });
-
-    client.on('card_reveal', (data) => {
-        var g = games.find(g => (g.users.find(u => u.client == client)) != null);
-       if(!g){
-           return;
-       }
-        var card = g.deck.find(c => (c.house == data.house && c.value == data.value));
-        if(card.revealed || g.getActiveUser().client != client){
-            return;
-        }
-        g.progressRound();
-        data.activeUser = g.getActiveUser().name;
-        card.revealed = true;
-        g.users.forEach((user) => {
-            user.client.emit('card_reveal', data);
-        });
-        //g.getActiveUser().client.emit('buzz');
-    });
-    client.on('info', (data)=>{
-        console.log(data);
-    })
-});
+function getJsonFromUrl(url) {
+  var query = url;
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
 
 http.listen(process.env.PORT || 3000, () => {
     console.log('== Started == ');
 });
 
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+var Game        = require('./custom_c/game.js');
+var NetworkGame = require('./custom_c/network_game.js');
+var User        = require('./custom_c/user.js');
+var NetworkUser = require('./custom_c/network_user.js');
+var Card        = require('./custom_c/card.js');
+var Settings    = require('./custom_c/settings.js');
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+var game_master_list = new Array();
 
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
-class User{
-    constructor(name, client, facebook_id){
-        this.name = name;
-        this.client = client;
-        this.facebook_id = facebook_id;
-    }
-
-    setProfilePicture(picture){
-        this.profilePicture = profilePicture;
-    }
-}
-
-class Game {
-    constructor(token, host, rules){
-        this.token = token;
-        this.users = [];
-        this.host = host;
-        this.deck = [];
-        this.generateDeck();
-        this.goIndex = 0;
-        this.rules = rules || default_rules;
-    }
-
-    addUser(user){
-        this.users.push(user);
-    }
-
-    removeUser(user){
-        this.users.remove(user);
-    }
-
-    getActiveUser(){
-        return this.users[this.goIndex];
-    }
-
-    progressRound(){
-        this.goIndex += 1;
-        if(this.goIndex > this.users.length - 1){
-            this.goIndex = 0;
+io.on('connection', (client) => {
+    // Join Game
+    //  Type: "join game" / "create_game"
+    //  facebook
+    //      id
+    //      name
+    //  [OPTIONAL]
+    //      target_facebook_user    //  ONLY EXISTS WITHIN join game TYPE
+    client.on('join_game', (data) => {
+        var t_name = data.facebook.name || data.client.name;
+        var t_id = data.facebook.id || "G-" + md5(t_name)
+        var t_user = new User(client, t_id, t_name, data.client.gender);
+        var t_game;
+        switch(data.type){
+            case "join_game":
+                t_game = findGameByUser(data.target_facebook_user);
+                break;
+            case "create_game":
+                t_game = new Game();
+                game_master_list.push(t_game);
+                break;
         }
-    }
+        sendGamePacket(t_game, 'new_client', new NetworkUser(t_user));
+        t_game.addUser(t_user);
+        var d = t_game.users.map(x => new NetworkUser(x));
+        client.emit('join_game', {id:t_user.id, gameid:t_game.id, users:d, deck:t_game.deck, activeUser:new NetworkUser(t_game.getActiveUser())});
+    });
 
-    generateDeck(){
-      var t_HOUSES = shuffle(HOUSES);
-    
-      t_HOUSES.forEach((house) => {
-        var t_VALUES = shuffle(VALUES);
-    
-        t_VALUES.forEach((value) => {
-          this.deck.push(new Card(house, value, false));
+    // Facebook Check Games
+    // Array
+    //  friend{
+    //      id,
+    //      name
+    //  }
+    client.on('facebook_check_games', (data)=>{
+        var friendGames = new Array();
+        if(!data)return;
+        data.forEach((friend) => {
+            var t_game = findGameByUser(friend.id);
+            if(t_game){
+                friendGames.push(new NetworkGame(t_game));
+            }
         });
-      });
-      this.deck = shuffle(this.deck);
-    }
+        client.emit('update_games_list', friendGames);
+    });
+
+
+    client.on('card_reveal', (data) => {
+        var t_game = findGameByClient(client);
+        var t_user = findUserByValue(t_game, 'client', client)
+
+        if(t_game && t_game.getActiveUser() !== t_user){
+            return;
+        }
+        t_game.deck.find(x => x.house == data.house && x.value == data.value).revealed = true;
+        data.rule = Settings.default_rules.find(x => x.value == data.value).rule;
+        t_game.advanceRound();
+        data.activeUser = new NetworkUser(t_game.getActiveUser());
+        sendGamePacket(t_game,'card_reveal',data);
+    });
+
+    client.on('reconnect', () => {
+      console.log("got here")
+    });
+
+    client.on('disconnect', () => {
+        var t_game = findGameByClient(client);
+        var t_user = findUserByValue(t_game, 'client', client);
+        if(t_game && t_user){
+            var n_user = new NetworkUser(t_user);
+            if(t_game.removeUser(t_user)){
+                game_master_list = game_master_list.filter(g => g !== t_game);
+            }
+            sendGamePacket(t_game, 'disconnect_client', n_user);
+        }
+    });
+
+    client.on('avatar_request', (data) => {
+        var username = data.username;
+        getAvatar(username, () => {
+        });
+    });
+
+    client.on('game_id_search', (data) => {
+        var t_game = findGameByValue('id', data.toLowerCase());
+        if(t_game){
+            var games = new Array();
+            games.push(new NetworkGame(t_game));
+            client.emit('update_games_list', games)
+        }
+    });
+});
+
+
+// Avatar Request Handler
+
+var avatar = require('avatar-generator')();
+
+function getAvatar(name, callback){
+        avatar(name, 'male', 128)
+            .toBuffer(function (err,buffer){
+                callback(buffer.toString('base64'));
+            });
 }
 
-class Card{
-  constructor(house, value, revealed){
-    this.house = house;
-    this.value = value;
-    this.revealed = revealed;
-  }
+function sendGamePacket(game, message, data){
+    game.users.forEach((user) => {
+        user.client.emit(message, data);
+    });
+}
 
+function findGameByUser(userID){
+    return game_master_list.find(
+                            i_game => i_game.users.find(
+                                i_user => i_user.id == userID));
+}
+
+function findUserByValue(game, value, matchValue){
+    if(!game)return null;
+    return game.users.find(i_user => i_user[value] == matchValue);
+}
+
+function findGameByClient(client){
+    return game_master_list.find(
+                            i_game => i_game.users.find(
+                                i_user => i_user.client == client));
+}
+
+function findGameByValue(value, matchValue){
+    return game_master_list.find(
+        i_game => i_game[value] == matchValue
+    );
 }

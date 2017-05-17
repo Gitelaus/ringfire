@@ -10,7 +10,7 @@ var fs = require('fs');
 
 app.get('*', (req, res) => {
     var t_url = req.url.split("?")[0]
-    var f_path = __dirname + '/client/new' + (t_url == "/" ? "/index.html" : t_url);
+    var f_path = __dirname + '/client/' + (t_url == "/" ? "/index.html" : t_url);
     if (req.url.toLowerCase().startsWith("/avatar/")){
         var url_vars = req.url.split("?")[1] || "";
         var url_var_list = getJsonFromUrl(url_vars);

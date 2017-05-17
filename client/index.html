@@ -1,109 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Ring of Fire</title>
+        <title></title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="mobile-web-app-capable" content="yes">
-        <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
-        <link href="/css/normalize.css" rel="stylesheet">
-        <link href="/css/style.css" rel="stylesheet">
+        <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi">
+          <link href="https://fonts.googleapis.com/css?family=Unica+One" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
     </head>
     <body>
-    <div id="container">
-        <canvas id="gamescreen" width="100%" height="100%">
+        <canvas id="gamescreen">
 
         </canvas>
-        <div id="overlay">
-            <section id="login_form">
-                <button id="facebook_button">Facebook Login</button>
-                <button id="guest_button">Guest Login</button>
-            </section>
-            <section id="game_select" style="display:none">
-                <h1>Game Select</h1>
-                <div id="buttonContainer">
-                    <button style="cursor:pointer; pointer-events: all;" id="buttonCreate" onclick="void(0);">Create</button>
-                    |
-                    <button style="cursor:pointer; pointer-events: all;" id="buttonJoin" onclick="void(0);">Join</button>
-                <div>
-                <input id="textName" type="text" placeholder="Name" />
-                <button style="display:none;">You wanna fuck with the rules?</button>
-                <input id="textGameID" type="text" placeholder="GameID" maxlength=4 style="text-transform: uppercase" />
-                <br/>
-                <button id="buttonConfirm">Confirm</button>
-            </section>
-            <section id="rule_editor" style="display:none;">
-                <h1>Rule Editor</h1>
-                <select id="select_rule_value">
+        <div class="overlay" id="overlay">
+            <div id="announcement">
+                <img src="" />
+                <span>It is your go!</span>
+            </div>
+            <div class="pull_menu">
+                <span id="game_id">Hello</span>
+            </div>
+            <div class="social_navigation">
+                <img class="facebook_image"/>
+                <p class="facebook_name"></p>
+            </div>
 
-                </select>
-                <br/>
-                <div>
-                    <img class="rule_img" src="/images/cards/cardSpadesQ.png" alt="" />
-                    <img class="rule_img" src="/images/cards/cardSpadesQ.png" alt="" />
-                    <img class="rule_img" src="/images/cards/cardSpadesQ.png" alt="" />
-                    <img class="rule_img" src="/images/cards/cardSpadesQ.png" alt="" />
+            <div id="social_round_bar">
+                <!--<img src="http://graph.facebook.com/10155124329484047/picture?height=50&width=50" />-->
+            </div>
+            
+            <div class="menu" id="facebook_login">
+                <button id="facebook_button">Login with Facebook</button>
+                <span>or</span>
+                <input type="text" placeholder="Name" id="guest_name" />
+                <div class="tab_container" style="margin-top:5px;">
+                    <div style="margin:auto;text-align:center;">
+                        <img onclick="switchButtonGender('male');" src="/avatar/?name=default&gender=male" id="guest_image_male" width="64px" height="64px" style="border:2px green solid;" />  
+                        <p style="margin-top:-22px; color:black; font-size:20px; font-weight:800;">Male</p>
+                    </div>
+                    <div style="margin:auto;text-align:center;">
+                        <img onclick="switchButtonGender('female');" src="/avatar/?name=default&gender=female" id="guest_image_female" width="64px" height="64px" style="border:2px white solid;" />
+                        <p style="margin-top:-22px; color:black; font-size:20px; font-weight:800;">Female</p>
+                    </div>
                 </div>
-                <p>
-                    Rule Text
-                </p>
-                <div>
-                    <button>Edit</button>
+                <button id="guest_button" data-type="male">Login as "" [Guest Male]</button>
+            </div>
+            <div class="menu" id="join_game"  style="display:none">
+                <span class="title">Join Game</span>
+                <input maxlength="4" type="text" placeholder="gameid" id="game_id_search" style="text-align:center;font-size:24px;" />
+                <div id="game_list">
                 </div>
-                <label>Save these rules for next time?</label>
-                <input type="checkbox">
-                <div>
-                    <button>Reset Current</button>
-                    |
-                    <button>Exit</button>
-                </div>
-            </section>
-            <div id="pullmenu" style="display:none;">
-                <span id="pullmenu_title">Ring of Fire</span>
-                <a href=""><span id="gameid">GameID: XXYY</span></a>
-                <span>Players:</span>
-                <div id="playerlist">
-                </div>
+                <div class="tab_container">
+                    <button id="refresh_game_button">Refresh</button>
+                    <button id="create_game_button">Create</button>
+                 </div>
             </div>
         </div>
-    </div>
-    <!--<ul id="messages">
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({
+                appId      : '247109212415502',
+                xfbml      : true,
+                version    : 'v2.8'
+                });
+                FB.AppEvents.logPageView();
+            };
 
-    </ul>
-    <form id="frm" action="#">
-        <input type="text" placeholder="Type here..." id="messaging">
-        <button>Submit</button>
-    </form>-->
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-    (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-4021560189818310",
-        enable_page_level_ads: true
-    });
-    </script>
-    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
-    <script src="/javascript/pixi.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
-    <script src="/javascript/hammer.min.js"></script>
-    <script>
-        window.fbAsyncInit = function() {
-            FB.init({
-            appId      : '247109212415502',
-            xfbml      : true,
-            version    : 'v2.8'
-            });
-            FB.AppEvents.logPageView();
-        };
-
-        (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+            (function(d, s, id){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
         </script>
-    <script src="/javascript/client.js"></script>
+        <script src="https://ringfire.herokuapp.com/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+        <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+        <script src="javascript/hammer.min.js"></script>
+        <script src="javascript/networking.js"></script>
+        <script src="javascript/ui_controller.js"></script>
+        <script src="javascript/canvas_controller.js"></script>
     </body>
 </html>
